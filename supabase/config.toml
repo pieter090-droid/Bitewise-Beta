@@ -1,0 +1,49 @@
+# Bitewise – Supabase lokale configuratie.
+# `supabase start` gebruikt dit; `supabase db push` / `functions deploy` ook.
+project_id = "bitewise"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[db.pooler]
+enabled = false
+
+[studio]
+enabled = true
+port = 54323
+
+[inbucket]
+enabled = true
+port = 54324
+
+[storage]
+enabled = true
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["io.bitewise://login-callback"]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+# Nodig voor sync: gebruikers krijgen een identiteit zonder login-scherm.
+enable_anonymous_sign_ins = true
+
+[auth.email]
+enable_signup = true
+enable_confirmations = false
+
+# Edge Functions. verify_jwt=true → de client stuurt automatisch de anon/JWT mee.
+[functions.lookup_product]
+verify_jwt = true
+
+[functions.recommend_swaps]
+verify_jwt = true

@@ -1,0 +1,49 @@
+name: bitewise
+description: "Bitewise – premium voedingsapp met SnackSwap swap-aanbevelingen."
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.6.0 <4.0.0"
+  flutter: ">=3.27.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  flutter_riverpod: ^2.6.1
+
+  # Routing
+  go_router: ^14.6.2
+
+  # Local persistence (Drift / SQLite)
+  drift: ^2.23.0
+  drift_flutter: ^0.2.4
+  sqlite3_flutter_libs: ^0.5.26
+  path_provider: ^2.1.5
+  path: ^1.9.0
+
+  # Simple settings
+  shared_preferences: ^2.3.3
+
+  # Barcode scanning
+  mobile_scanner: ^6.0.2
+
+  # Backend
+  supabase_flutter: ^2.8.0
+
+  # Misc
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.13
+  drift_dev: ^2.23.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/env/

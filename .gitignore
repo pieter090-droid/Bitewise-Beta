@@ -1,0 +1,23 @@
+# Flutter/Dart
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+pubspec.lock
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Secrets / env
+assets/env/env.json
+*.env
+
+# Generated (regenerate with build_runner)
+# NOTE: *.g.dart are checked in as needed; comment out if you prefer to ignore.
+
+# OS
+.DS_Store
+Thumbs.db
