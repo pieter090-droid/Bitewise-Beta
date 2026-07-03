@@ -11,6 +11,7 @@ abstract final class AppConstants {
   static const String prefSyncEnabled = 'sync_enabled';
   static const String prefAnalyticsEnabled = 'analytics_enabled';
   static const String prefInstallId = 'install_id';
+  static const String prefDefaultGoal = 'default_goal';
 
   // Voedingsstandaarden (per 100 g/ml tenzij anders vermeld).
   static const double defaultServingGrams = 100;

@@ -7,6 +7,7 @@ abstract final class AppColors {
   // Brand
   static const Color navy = Color(0xFF0D1B2A);
   static const Color gold = Color(0xFFC9A84C);
+  static const Color cream = Color(0xFFF7F3EA);
 
   // Navy shades
   static const Color navy800 = Color(0xFF16273A);
