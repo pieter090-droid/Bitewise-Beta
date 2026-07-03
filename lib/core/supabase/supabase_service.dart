@@ -17,7 +17,8 @@ class SupabaseService {
     if (!Env.instance.hasSupabase) return;
     await Supabase.initialize(
       url: Env.instance.supabaseUrl,
-      anonKey: Env.instance.supabaseAnonKey,
+      // De key uit env is een publishable/anon key (nooit service_role).
+      publishableKey: Env.instance.supabaseAnonKey,
     );
     _initialized = true;
   }
