@@ -35,8 +35,15 @@ class AppDatabase extends _$AppDatabase {
       );
 
   static QueryExecutor _defaultConnection() {
-    // drift_flutter kiest automatisch de juiste native SQLite per platform.
-    return driftDatabase(name: 'bitewise_db');
+    // drift_flutter kiest de juiste native SQLite per platform. Op web wijzen
+    // we expliciet naar de assets in web/ (sqlite3.wasm + drift_worker.js).
+    return driftDatabase(
+      name: 'bitewise_db',
+      web: DriftWebOptions(
+        sqlite3Wasm: Uri.parse('sqlite3.wasm'),
+        driftWorker: Uri.parse('drift_worker.js'),
+      ),
+    );
   }
 }
 
