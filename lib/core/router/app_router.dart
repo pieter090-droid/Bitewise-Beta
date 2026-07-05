@@ -6,6 +6,7 @@ import 'package:bitewise/core/preferences/preferences_service.dart';
 import 'package:bitewise/features/favorites/presentation/favorites_screen.dart';
 import 'package:bitewise/features/home/presentation/home_screen.dart';
 import 'package:bitewise/features/onboarding/presentation/onboarding_screen.dart';
+import 'package:bitewise/features/recipes/presentation/recipe_builder_screen.dart';
 import 'package:bitewise/features/scanner/presentation/scanner_screen.dart';
 import 'package:bitewise/features/settings/presentation/settings_screen.dart';
 import 'package:bitewise/features/shell/app_shell.dart';
@@ -21,6 +22,8 @@ abstract final class Routes {
   static const favorites = '/favorites';
   static const settings = '/settings';
   static const camera = '/camera';
+  static const pick = '/pick';
+  static const recipeBuilder = '/recipe/new';
 
   static String product(String barcode) => '/product/$barcode';
   static String swap(String barcode) => '/swap/$barcode';
@@ -74,6 +77,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootKey,
         path: Routes.camera,
         builder: (context, state) => const ScannerScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootKey,
+        path: Routes.pick,
+        builder: (context, state) => const ScanScreen(pickMode: true),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootKey,
+        path: Routes.recipeBuilder,
+        builder: (context, state) => const RecipeBuilderScreen(),
       ),
       GoRoute(
         parentNavigatorKey: _rootKey,

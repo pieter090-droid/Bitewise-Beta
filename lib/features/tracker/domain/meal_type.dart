@@ -5,7 +5,8 @@ enum MealType {
   breakfast('Ontbijt', Icons.wb_twilight_outlined),
   lunch('Lunch', Icons.lunch_dining_outlined),
   dinner('Diner', Icons.dinner_dining_outlined),
-  snack('Snack', Icons.cookie_outlined);
+  snack('Snack', Icons.cookie_outlined),
+  drink('Drinken', Icons.local_drink_outlined);
 
   const MealType(this.label, this.icon);
 

@@ -77,6 +77,8 @@ class _SwapScreenState extends ConsumerState<SwapScreen> {
           kcal: item.kcal ?? 0,
           protein: item.proteinG ?? 0,
           sugar: item.sugarG ?? 0,
+          carbs: item.carbsG ?? 0,
+          fat: item.fatG ?? 0,
         );
     ref.read(syncCoordinatorProvider).onLogsChanged();
     if (!mounted) return;

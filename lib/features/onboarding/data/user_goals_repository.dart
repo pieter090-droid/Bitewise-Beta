@@ -40,6 +40,7 @@ class UserGoalsRepository {
               calorieTarget: goal.calorieTarget,
               proteinTarget: goal.proteinTarget,
               sugarLimit: goal.sugarLimit,
+              carbsTarget: Value(goal.carbsTarget),
               preferencesJson: Value(
                 jsonEncode(goal.preferences.map((p) => p.name).toList()),
               ),
@@ -68,6 +69,7 @@ class UserGoalsRepository {
       calorieTarget: row.calorieTarget,
       proteinTarget: row.proteinTarget,
       sugarLimit: row.sugarLimit,
+      carbsTarget: row.carbsTarget,
       preferences: prefs,
       allergies: allergies,
     );

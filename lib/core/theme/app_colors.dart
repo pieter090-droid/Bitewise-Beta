@@ -30,4 +30,5 @@ abstract final class AppColors {
   static const Color kcal = gold;
   static const Color protein = Color(0xFF4B8FB3);
   static const Color sugar = Color(0xFFC65B54);
+  static const Color carbs = Color(0xFF6BA292);
 }

@@ -13,7 +13,11 @@ import 'package:bitewise/features/tracker/application/tracker_providers.dart';
 
 /// Toevoegen: zoek op productnaam (suggesties), voer een barcode in, of scan.
 class ScanScreen extends ConsumerStatefulWidget {
-  const ScanScreen({super.key});
+  const ScanScreen({this.pickMode = false, super.key});
+
+  /// In pickMode geeft het scherm de gekozen barcode terug via Navigator.pop
+  /// (voor favorieten/gerecht), i.p.v. door te gaan naar het productdetail.
+  final bool pickMode;
 
   @override
   ConsumerState<ScanScreen> createState() => _ScanScreenState();
@@ -54,7 +58,13 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
     });
   }
 
-  void _open(String barcode) => context.push(Routes.product(barcode));
+  void _open(String barcode) {
+    if (widget.pickMode) {
+      Navigator.pop(context, barcode);
+    } else {
+      context.push(Routes.product(barcode));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,12 +75,12 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
       backgroundColor: AppColors.cream,
       appBar: AppBar(
         backgroundColor: AppColors.cream,
-        title: const Text('Toevoegen'),
+        title: Text(widget.pickMode ? 'Kies product' : 'Toevoegen'),
       ),
       body: SafeArea(
         child: Column(
           children: [
-            if (pendingMeal != null)
+            if (pendingMeal != null && !widget.pickMode)
               Container(
                 width: double.infinity,
                 color: AppColors.gold.withValues(alpha: 0.18),
@@ -97,7 +107,7 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
               ),
             ),
             Expanded(child: _body(isBarcode)),
-            if (!kIsWeb)
+            if (!kIsWeb && !widget.pickMode)
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
                 child: OutlinedButton.icon(

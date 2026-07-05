@@ -7,6 +7,7 @@ class UserGoal {
     required this.calorieTarget,
     required this.proteinTarget,
     required this.sugarLimit,
+    required this.carbsTarget,
     this.preferences = const {},
     this.allergies = const {},
   });
@@ -22,20 +23,39 @@ class UserGoal {
   /// Dagelijkse suikerlimiet (g).
   final int sugarLimit;
 
+  /// Dagelijks koolhydraatdoel (g).
+  final int carbsTarget;
+
   final Set<DietPreference> preferences;
   final Set<Allergy> allergies;
 
   /// Verstandige startwaarden voor een net gekozen doel.
   factory UserGoal.defaultsFor(GoalType type) {
     return switch (type) {
-      GoalType.loseWeight =>
-        const UserGoal(goalType: GoalType.loseWeight, calorieTarget: 1800, proteinTarget: 110, sugarLimit: 40),
-      GoalType.maintain =>
-        const UserGoal(goalType: GoalType.maintain, calorieTarget: 2200, proteinTarget: 90, sugarLimit: 50),
-      GoalType.buildMuscle =>
-        const UserGoal(goalType: GoalType.buildMuscle, calorieTarget: 2600, proteinTarget: 150, sugarLimit: 55),
-      GoalType.lessSugar =>
-        const UserGoal(goalType: GoalType.lessSugar, calorieTarget: 2000, proteinTarget: 100, sugarLimit: 25),
+      GoalType.loseWeight => const UserGoal(
+          goalType: GoalType.loseWeight,
+          calorieTarget: 1800,
+          proteinTarget: 110,
+          sugarLimit: 40,
+          carbsTarget: 180),
+      GoalType.maintain => const UserGoal(
+          goalType: GoalType.maintain,
+          calorieTarget: 2200,
+          proteinTarget: 90,
+          sugarLimit: 50,
+          carbsTarget: 240),
+      GoalType.buildMuscle => const UserGoal(
+          goalType: GoalType.buildMuscle,
+          calorieTarget: 2600,
+          proteinTarget: 150,
+          sugarLimit: 55,
+          carbsTarget: 300),
+      GoalType.lessSugar => const UserGoal(
+          goalType: GoalType.lessSugar,
+          calorieTarget: 2000,
+          proteinTarget: 100,
+          sugarLimit: 25,
+          carbsTarget: 200),
     };
   }
 
@@ -44,6 +64,7 @@ class UserGoal {
     int? calorieTarget,
     int? proteinTarget,
     int? sugarLimit,
+    int? carbsTarget,
     Set<DietPreference>? preferences,
     Set<Allergy>? allergies,
   }) {
@@ -52,6 +73,7 @@ class UserGoal {
       calorieTarget: calorieTarget ?? this.calorieTarget,
       proteinTarget: proteinTarget ?? this.proteinTarget,
       sugarLimit: sugarLimit ?? this.sugarLimit,
+      carbsTarget: carbsTarget ?? this.carbsTarget,
       preferences: preferences ?? this.preferences,
       allergies: allergies ?? this.allergies,
     );
@@ -63,6 +85,7 @@ class UserGoal {
         'calorie_target': calorieTarget,
         'protein_target': proteinTarget,
         'sugar_limit': sugarLimit,
+        'carbs_target': carbsTarget,
         'preferences': preferences.map((p) => p.name).toList(),
         'allergies': allergies.map((a) => a.name).toList(),
       };

@@ -47,6 +47,8 @@ class DayLogsRepository {
     required double kcal,
     required double protein,
     required double sugar,
+    double carbs = 0,
+    double fat = 0,
     DateTime? day,
   }) async {
     await _db.into(_db.dayLogs).insert(
@@ -58,6 +60,8 @@ class DayLogsRepository {
             kcal: kcal,
             protein: protein,
             sugar: sugar,
+            carbs: Value(carbs),
+            fat: Value(fat),
             logDate: _dayKey(day ?? DateTime.now()),
           ),
         );
@@ -134,6 +138,8 @@ class DayLogsRepository {
         kcal: row.kcal,
         protein: row.protein,
         sugar: row.sugar,
+        carbs: row.carbs,
+        fat: row.fat,
         logDate: row.logDate,
       );
 }

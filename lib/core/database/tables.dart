@@ -11,6 +11,7 @@ class UserGoals extends Table {
   IntColumn get calorieTarget => integer()();
   IntColumn get proteinTarget => integer()();
   IntColumn get sugarLimit => integer()();
+  IntColumn get carbsTarget => integer().withDefault(const Constant(250))();
 
   /// JSON-array van voorkeuren (bv. ["vegetarisch","high_protein"]).
   TextColumn get preferencesJson => text().withDefault(const Constant('[]'))();
@@ -42,6 +43,8 @@ class DayLogs extends Table {
   RealColumn get kcal => real()();
   RealColumn get protein => real()();
   RealColumn get sugar => real()();
+  RealColumn get carbs => real().withDefault(const Constant(0))();
+  RealColumn get fat => real().withDefault(const Constant(0))();
 
   /// Datum (zonder tijd) waarvoor het log telt.
   DateTimeColumn get logDate => dateTime()();
@@ -84,6 +87,19 @@ class FavoriteProducts extends Table {
 
   @override
   Set<Column> get primaryKey => {barcode};
+}
+
+/// Zelfgemaakte gerechten: een naam + een lijst producten (als JSON) die je in
+/// één keer aan je tracker kunt toevoegen.
+@DataClassName('RecipeRow')
+class Recipes extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text()();
+
+  /// JSON-array van componenten (naam, barcode, gram + macro's per portie).
+  TextColumn get itemsJson => text()();
+  DateTimeColumn get createdAt =>
+      dateTime().withDefault(currentDateAndTime)();
 }
 
 /// Lokale feedback op swap-aanbevelingen (duim omhoog/omlaag).

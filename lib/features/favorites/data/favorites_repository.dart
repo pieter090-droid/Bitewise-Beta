@@ -53,6 +53,13 @@ class FavoritesRepository {
     }
   }
 
+  /// Voegt toe als favoriet (idempotent — geen dubbele).
+  Future<void> add({required String barcode, required String name}) async {
+    await _db.into(_db.favoriteProducts).insertOnConflictUpdate(
+          FavoriteProductsCompanion.insert(barcode: barcode, name: name),
+        );
+  }
+
   Future<void> remove(String barcode) async {
     await (_db.delete(_db.favoriteProducts)
           ..where((t) => t.barcode.equals(barcode)))

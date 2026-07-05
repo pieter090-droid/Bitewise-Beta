@@ -59,19 +59,22 @@ final dailySummaryProvider = Provider<DailySummary>((ref) {
   final logs = ref.watch(dayLogsProvider).valueOrNull ?? const [];
   final goal = ref.watch(activeGoalProvider).valueOrNull;
 
-  var kcal = 0.0, protein = 0.0, sugar = 0.0;
+  var kcal = 0.0, protein = 0.0, sugar = 0.0, carbs = 0.0;
   for (final log in logs) {
     kcal += log.kcal;
     protein += log.protein;
     sugar += log.sugar;
+    carbs += log.carbs;
   }
 
   return DailySummary(
     kcal: kcal,
     protein: protein,
     sugar: sugar,
+    carbs: carbs,
     calorieTarget: goal?.calorieTarget ?? DailySummary.empty.calorieTarget,
     proteinTarget: goal?.proteinTarget ?? DailySummary.empty.proteinTarget,
     sugarLimit: goal?.sugarLimit ?? DailySummary.empty.sugarLimit,
+    carbsTarget: goal?.carbsTarget ?? DailySummary.empty.carbsTarget,
   );
 });

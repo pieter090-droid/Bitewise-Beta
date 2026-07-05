@@ -13,6 +13,7 @@ part 'app_database.g.dart';
     CachedProducts,
     FavoriteProducts,
     SwapFeedbacks,
+    Recipes,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -20,7 +21,7 @@ class AppDatabase extends _$AppDatabase {
       : super(executor ?? _defaultConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -30,6 +31,13 @@ class AppDatabase extends _$AppDatabase {
             // Sync-velden toegevoegd aan day_logs.
             await m.addColumn(dayLogs, dayLogs.remoteId);
             await m.addColumn(dayLogs, dayLogs.dirty);
+          }
+          if (from < 3) {
+            // Koolhydraten/vet in logs, koolhydraat-doel, en gerechten.
+            await m.addColumn(dayLogs, dayLogs.carbs);
+            await m.addColumn(dayLogs, dayLogs.fat);
+            await m.addColumn(userGoals, userGoals.carbsTarget);
+            await m.createTable(recipes);
           }
         },
       );

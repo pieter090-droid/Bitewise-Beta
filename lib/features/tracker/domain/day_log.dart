@@ -1,6 +1,6 @@
 import 'package:bitewise/features/tracker/domain/meal_type.dart';
 
-/// Eén gelogd item op een dag.
+/// Eén gelogd item op een dag (voedingswaarden voor de gelogde portie).
 class DayLog {
   const DayLog({
     required this.id,
@@ -10,6 +10,8 @@ class DayLog {
     required this.kcal,
     required this.protein,
     required this.sugar,
+    required this.carbs,
+    required this.fat,
     required this.logDate,
     this.barcode,
   });
@@ -22,6 +24,8 @@ class DayLog {
   final double kcal;
   final double protein;
   final double sugar;
+  final double carbs;
+  final double fat;
   final DateTime logDate;
 }
 
@@ -31,21 +35,23 @@ class DailySummary {
     required this.kcal,
     required this.protein,
     required this.sugar,
+    required this.carbs,
     required this.calorieTarget,
     required this.proteinTarget,
     required this.sugarLimit,
+    required this.carbsTarget,
   });
 
   final double kcal;
   final double protein;
   final double sugar;
+  final double carbs;
   final int calorieTarget;
   final int proteinTarget;
   final int sugarLimit;
+  final int carbsTarget;
 
   double get remainingKcal => (calorieTarget - kcal).clamp(-9999, 999999);
-  double get remainingProtein => (proteinTarget - protein).clamp(-9999, 999999);
-  double get sugarRemaining => (sugarLimit - sugar);
 
   double get kcalProgress =>
       calorieTarget == 0 ? 0 : (kcal / calorieTarget).clamp(0, 1);
@@ -53,6 +59,8 @@ class DailySummary {
       proteinTarget == 0 ? 0 : (protein / proteinTarget).clamp(0, 1);
   double get sugarProgress =>
       sugarLimit == 0 ? 0 : (sugar / sugarLimit).clamp(0, 1);
+  double get carbsProgress =>
+      carbsTarget == 0 ? 0 : (carbs / carbsTarget).clamp(0, 1);
 
   bool get overSugarLimit => sugar > sugarLimit;
 
@@ -60,8 +68,10 @@ class DailySummary {
     kcal: 0,
     protein: 0,
     sugar: 0,
+    carbs: 0,
     calorieTarget: 2000,
     proteinTarget: 100,
     sugarLimit: 50,
+    carbsTarget: 250,
   );
 }

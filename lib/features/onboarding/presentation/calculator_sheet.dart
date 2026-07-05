@@ -242,6 +242,12 @@ class _ResultCard extends StatelessWidget {
           Row(
             children: [
               _metric('${suggestion.calorieTarget}', 'kcal'),
+              _metric('${suggestion.carbsTarget} g', 'koolhydraten'),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
               _metric('${suggestion.proteinTarget} g', 'eiwit'),
               _metric('${suggestion.sugarLimit} g', 'suikerlimiet'),
             ],

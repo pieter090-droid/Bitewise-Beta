@@ -75,6 +75,7 @@ class _EditGoalSheetState extends State<EditGoalSheet> {
                               calorieTarget: res.calorieTarget,
                               proteinTarget: res.proteinTarget,
                               sugarLimit: res.sugarLimit,
+                              carbsTarget: res.carbsTarget,
                             ));
                       }
                     },
@@ -94,6 +95,10 @@ class _EditGoalSheetState extends State<EditGoalSheet> {
                       16, 'g',
                       (v) => setState(() =>
                           _goal = _goal.copyWith(sugarLimit: v.round()))),
+                  _slider('Koolhydraten', _goal.carbsTarget.toDouble(), 50, 500,
+                      90, 'g',
+                      (v) => setState(() =>
+                          _goal = _goal.copyWith(carbsTarget: v.round()))),
                   const SizedBox(height: 12),
                   const Text('Voorkeuren',
                       style: TextStyle(

@@ -193,6 +193,7 @@ class _TargetsStep extends ConsumerWidget {
               ctrl.setCalorieTarget(res.calorieTarget);
               ctrl.setProteinTarget(res.proteinTarget);
               ctrl.setSugarLimit(res.sugarLimit);
+              ctrl.setCarbsTarget(res.carbsTarget);
             }
           },
           icon: const Icon(Icons.calculate_outlined),
@@ -225,6 +226,15 @@ class _TargetsStep extends ConsumerWidget {
           divisions: 16,
           unit: 'g',
           onChanged: (v) => ctrl.setSugarLimit(v.round()),
+        ),
+        _SliderTile(
+          label: 'Koolhydraten',
+          value: goal.carbsTarget.toDouble(),
+          min: 50,
+          max: 500,
+          divisions: 90,
+          unit: 'g',
+          onChanged: (v) => ctrl.setCarbsTarget(v.round()),
         ),
       ],
     );

@@ -42,6 +42,14 @@ class $UserGoalsTable extends UserGoals
   late final GeneratedColumn<int> sugarLimit = GeneratedColumn<int>(
       'sugar_limit', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _carbsTargetMeta =
+      const VerificationMeta('carbsTarget');
+  @override
+  late final GeneratedColumn<int> carbsTarget = GeneratedColumn<int>(
+      'carbs_target', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(250));
   static const VerificationMeta _preferencesJsonMeta =
       const VerificationMeta('preferencesJson');
   @override
@@ -81,6 +89,7 @@ class $UserGoalsTable extends UserGoals
         calorieTarget,
         proteinTarget,
         sugarLimit,
+        carbsTarget,
         preferencesJson,
         allergiesJson,
         createdAt,
@@ -131,6 +140,12 @@ class $UserGoalsTable extends UserGoals
     } else if (isInserting) {
       context.missing(_sugarLimitMeta);
     }
+    if (data.containsKey('carbs_target')) {
+      context.handle(
+          _carbsTargetMeta,
+          carbsTarget.isAcceptableOrUnknown(
+              data['carbs_target']!, _carbsTargetMeta));
+    }
     if (data.containsKey('preferences_json')) {
       context.handle(
           _preferencesJsonMeta,
@@ -170,6 +185,8 @@ class $UserGoalsTable extends UserGoals
           .read(DriftSqlType.int, data['${effectivePrefix}protein_target'])!,
       sugarLimit: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}sugar_limit'])!,
+      carbsTarget: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}carbs_target'])!,
       preferencesJson: attachedDatabase.typeMapping.read(
           DriftSqlType.string, data['${effectivePrefix}preferences_json'])!,
       allergiesJson: attachedDatabase.typeMapping
@@ -195,6 +212,7 @@ class UserGoalRow extends DataClass implements Insertable<UserGoalRow> {
   final int calorieTarget;
   final int proteinTarget;
   final int sugarLimit;
+  final int carbsTarget;
 
   /// JSON-array van voorkeuren (bv. ["vegetarisch","high_protein"]).
   final String preferencesJson;
@@ -209,6 +227,7 @@ class UserGoalRow extends DataClass implements Insertable<UserGoalRow> {
       required this.calorieTarget,
       required this.proteinTarget,
       required this.sugarLimit,
+      required this.carbsTarget,
       required this.preferencesJson,
       required this.allergiesJson,
       required this.createdAt,
@@ -221,6 +240,7 @@ class UserGoalRow extends DataClass implements Insertable<UserGoalRow> {
     map['calorie_target'] = Variable<int>(calorieTarget);
     map['protein_target'] = Variable<int>(proteinTarget);
     map['sugar_limit'] = Variable<int>(sugarLimit);
+    map['carbs_target'] = Variable<int>(carbsTarget);
     map['preferences_json'] = Variable<String>(preferencesJson);
     map['allergies_json'] = Variable<String>(allergiesJson);
     map['created_at'] = Variable<DateTime>(createdAt);
@@ -235,6 +255,7 @@ class UserGoalRow extends DataClass implements Insertable<UserGoalRow> {
       calorieTarget: Value(calorieTarget),
       proteinTarget: Value(proteinTarget),
       sugarLimit: Value(sugarLimit),
+      carbsTarget: Value(carbsTarget),
       preferencesJson: Value(preferencesJson),
       allergiesJson: Value(allergiesJson),
       createdAt: Value(createdAt),
@@ -251,6 +272,7 @@ class UserGoalRow extends DataClass implements Insertable<UserGoalRow> {
       calorieTarget: serializer.fromJson<int>(json['calorieTarget']),
       proteinTarget: serializer.fromJson<int>(json['proteinTarget']),
       sugarLimit: serializer.fromJson<int>(json['sugarLimit']),
+      carbsTarget: serializer.fromJson<int>(json['carbsTarget']),
       preferencesJson: serializer.fromJson<String>(json['preferencesJson']),
       allergiesJson: serializer.fromJson<String>(json['allergiesJson']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
@@ -266,6 +288,7 @@ class UserGoalRow extends DataClass implements Insertable<UserGoalRow> {
       'calorieTarget': serializer.toJson<int>(calorieTarget),
       'proteinTarget': serializer.toJson<int>(proteinTarget),
       'sugarLimit': serializer.toJson<int>(sugarLimit),
+      'carbsTarget': serializer.toJson<int>(carbsTarget),
       'preferencesJson': serializer.toJson<String>(preferencesJson),
       'allergiesJson': serializer.toJson<String>(allergiesJson),
       'createdAt': serializer.toJson<DateTime>(createdAt),
@@ -279,6 +302,7 @@ class UserGoalRow extends DataClass implements Insertable<UserGoalRow> {
           int? calorieTarget,
           int? proteinTarget,
           int? sugarLimit,
+          int? carbsTarget,
           String? preferencesJson,
           String? allergiesJson,
           DateTime? createdAt,
@@ -289,6 +313,7 @@ class UserGoalRow extends DataClass implements Insertable<UserGoalRow> {
         calorieTarget: calorieTarget ?? this.calorieTarget,
         proteinTarget: proteinTarget ?? this.proteinTarget,
         sugarLimit: sugarLimit ?? this.sugarLimit,
+        carbsTarget: carbsTarget ?? this.carbsTarget,
         preferencesJson: preferencesJson ?? this.preferencesJson,
         allergiesJson: allergiesJson ?? this.allergiesJson,
         createdAt: createdAt ?? this.createdAt,
@@ -308,6 +333,8 @@ class UserGoalRow extends DataClass implements Insertable<UserGoalRow> {
           : this.proteinTarget,
       sugarLimit:
           data.sugarLimit.present ? data.sugarLimit.value : this.sugarLimit,
+      carbsTarget:
+          data.carbsTarget.present ? data.carbsTarget.value : this.carbsTarget,
       preferencesJson: data.preferencesJson.present
           ? data.preferencesJson.value
           : this.preferencesJson,
@@ -327,6 +354,7 @@ class UserGoalRow extends DataClass implements Insertable<UserGoalRow> {
           ..write('calorieTarget: $calorieTarget, ')
           ..write('proteinTarget: $proteinTarget, ')
           ..write('sugarLimit: $sugarLimit, ')
+          ..write('carbsTarget: $carbsTarget, ')
           ..write('preferencesJson: $preferencesJson, ')
           ..write('allergiesJson: $allergiesJson, ')
           ..write('createdAt: $createdAt, ')
@@ -342,6 +370,7 @@ class UserGoalRow extends DataClass implements Insertable<UserGoalRow> {
       calorieTarget,
       proteinTarget,
       sugarLimit,
+      carbsTarget,
       preferencesJson,
       allergiesJson,
       createdAt,
@@ -355,6 +384,7 @@ class UserGoalRow extends DataClass implements Insertable<UserGoalRow> {
           other.calorieTarget == this.calorieTarget &&
           other.proteinTarget == this.proteinTarget &&
           other.sugarLimit == this.sugarLimit &&
+          other.carbsTarget == this.carbsTarget &&
           other.preferencesJson == this.preferencesJson &&
           other.allergiesJson == this.allergiesJson &&
           other.createdAt == this.createdAt &&
@@ -367,6 +397,7 @@ class UserGoalsCompanion extends UpdateCompanion<UserGoalRow> {
   final Value<int> calorieTarget;
   final Value<int> proteinTarget;
   final Value<int> sugarLimit;
+  final Value<int> carbsTarget;
   final Value<String> preferencesJson;
   final Value<String> allergiesJson;
   final Value<DateTime> createdAt;
@@ -377,6 +408,7 @@ class UserGoalsCompanion extends UpdateCompanion<UserGoalRow> {
     this.calorieTarget = const Value.absent(),
     this.proteinTarget = const Value.absent(),
     this.sugarLimit = const Value.absent(),
+    this.carbsTarget = const Value.absent(),
     this.preferencesJson = const Value.absent(),
     this.allergiesJson = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -388,6 +420,7 @@ class UserGoalsCompanion extends UpdateCompanion<UserGoalRow> {
     required int calorieTarget,
     required int proteinTarget,
     required int sugarLimit,
+    this.carbsTarget = const Value.absent(),
     this.preferencesJson = const Value.absent(),
     this.allergiesJson = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -402,6 +435,7 @@ class UserGoalsCompanion extends UpdateCompanion<UserGoalRow> {
     Expression<int>? calorieTarget,
     Expression<int>? proteinTarget,
     Expression<int>? sugarLimit,
+    Expression<int>? carbsTarget,
     Expression<String>? preferencesJson,
     Expression<String>? allergiesJson,
     Expression<DateTime>? createdAt,
@@ -413,6 +447,7 @@ class UserGoalsCompanion extends UpdateCompanion<UserGoalRow> {
       if (calorieTarget != null) 'calorie_target': calorieTarget,
       if (proteinTarget != null) 'protein_target': proteinTarget,
       if (sugarLimit != null) 'sugar_limit': sugarLimit,
+      if (carbsTarget != null) 'carbs_target': carbsTarget,
       if (preferencesJson != null) 'preferences_json': preferencesJson,
       if (allergiesJson != null) 'allergies_json': allergiesJson,
       if (createdAt != null) 'created_at': createdAt,
@@ -426,6 +461,7 @@ class UserGoalsCompanion extends UpdateCompanion<UserGoalRow> {
       Value<int>? calorieTarget,
       Value<int>? proteinTarget,
       Value<int>? sugarLimit,
+      Value<int>? carbsTarget,
       Value<String>? preferencesJson,
       Value<String>? allergiesJson,
       Value<DateTime>? createdAt,
@@ -436,6 +472,7 @@ class UserGoalsCompanion extends UpdateCompanion<UserGoalRow> {
       calorieTarget: calorieTarget ?? this.calorieTarget,
       proteinTarget: proteinTarget ?? this.proteinTarget,
       sugarLimit: sugarLimit ?? this.sugarLimit,
+      carbsTarget: carbsTarget ?? this.carbsTarget,
       preferencesJson: preferencesJson ?? this.preferencesJson,
       allergiesJson: allergiesJson ?? this.allergiesJson,
       createdAt: createdAt ?? this.createdAt,
@@ -461,6 +498,9 @@ class UserGoalsCompanion extends UpdateCompanion<UserGoalRow> {
     if (sugarLimit.present) {
       map['sugar_limit'] = Variable<int>(sugarLimit.value);
     }
+    if (carbsTarget.present) {
+      map['carbs_target'] = Variable<int>(carbsTarget.value);
+    }
     if (preferencesJson.present) {
       map['preferences_json'] = Variable<String>(preferencesJson.value);
     }
@@ -484,6 +524,7 @@ class UserGoalsCompanion extends UpdateCompanion<UserGoalRow> {
           ..write('calorieTarget: $calorieTarget, ')
           ..write('proteinTarget: $proteinTarget, ')
           ..write('sugarLimit: $sugarLimit, ')
+          ..write('carbsTarget: $carbsTarget, ')
           ..write('preferencesJson: $preferencesJson, ')
           ..write('allergiesJson: $allergiesJson, ')
           ..write('createdAt: $createdAt, ')
@@ -546,6 +587,20 @@ class $DayLogsTable extends DayLogs with TableInfo<$DayLogsTable, DayLogRow> {
   late final GeneratedColumn<double> sugar = GeneratedColumn<double>(
       'sugar', aliasedName, false,
       type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _carbsMeta = const VerificationMeta('carbs');
+  @override
+  late final GeneratedColumn<double> carbs = GeneratedColumn<double>(
+      'carbs', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _fatMeta = const VerificationMeta('fat');
+  @override
+  late final GeneratedColumn<double> fat = GeneratedColumn<double>(
+      'fat', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
   static const VerificationMeta _logDateMeta =
       const VerificationMeta('logDate');
   @override
@@ -585,6 +640,8 @@ class $DayLogsTable extends DayLogs with TableInfo<$DayLogsTable, DayLogRow> {
         kcal,
         protein,
         sugar,
+        carbs,
+        fat,
         logDate,
         createdAt,
         remoteId,
@@ -647,6 +704,14 @@ class $DayLogsTable extends DayLogs with TableInfo<$DayLogsTable, DayLogRow> {
     } else if (isInserting) {
       context.missing(_sugarMeta);
     }
+    if (data.containsKey('carbs')) {
+      context.handle(
+          _carbsMeta, carbs.isAcceptableOrUnknown(data['carbs']!, _carbsMeta));
+    }
+    if (data.containsKey('fat')) {
+      context.handle(
+          _fatMeta, fat.isAcceptableOrUnknown(data['fat']!, _fatMeta));
+    }
     if (data.containsKey('log_date')) {
       context.handle(_logDateMeta,
           logDate.isAcceptableOrUnknown(data['log_date']!, _logDateMeta));
@@ -690,6 +755,10 @@ class $DayLogsTable extends DayLogs with TableInfo<$DayLogsTable, DayLogRow> {
           .read(DriftSqlType.double, data['${effectivePrefix}protein'])!,
       sugar: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}sugar'])!,
+      carbs: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}carbs'])!,
+      fat: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}fat'])!,
       logDate: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}log_date'])!,
       createdAt: attachedDatabase.typeMapping
@@ -720,6 +789,8 @@ class DayLogRow extends DataClass implements Insertable<DayLogRow> {
   final double kcal;
   final double protein;
   final double sugar;
+  final double carbs;
+  final double fat;
 
   /// Datum (zonder tijd) waarvoor het log telt.
   final DateTime logDate;
@@ -739,6 +810,8 @@ class DayLogRow extends DataClass implements Insertable<DayLogRow> {
       required this.kcal,
       required this.protein,
       required this.sugar,
+      required this.carbs,
+      required this.fat,
       required this.logDate,
       required this.createdAt,
       this.remoteId,
@@ -756,6 +829,8 @@ class DayLogRow extends DataClass implements Insertable<DayLogRow> {
     map['kcal'] = Variable<double>(kcal);
     map['protein'] = Variable<double>(protein);
     map['sugar'] = Variable<double>(sugar);
+    map['carbs'] = Variable<double>(carbs);
+    map['fat'] = Variable<double>(fat);
     map['log_date'] = Variable<DateTime>(logDate);
     map['created_at'] = Variable<DateTime>(createdAt);
     if (!nullToAbsent || remoteId != null) {
@@ -777,6 +852,8 @@ class DayLogRow extends DataClass implements Insertable<DayLogRow> {
       kcal: Value(kcal),
       protein: Value(protein),
       sugar: Value(sugar),
+      carbs: Value(carbs),
+      fat: Value(fat),
       logDate: Value(logDate),
       createdAt: Value(createdAt),
       remoteId: remoteId == null && nullToAbsent
@@ -798,6 +875,8 @@ class DayLogRow extends DataClass implements Insertable<DayLogRow> {
       kcal: serializer.fromJson<double>(json['kcal']),
       protein: serializer.fromJson<double>(json['protein']),
       sugar: serializer.fromJson<double>(json['sugar']),
+      carbs: serializer.fromJson<double>(json['carbs']),
+      fat: serializer.fromJson<double>(json['fat']),
       logDate: serializer.fromJson<DateTime>(json['logDate']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       remoteId: serializer.fromJson<String?>(json['remoteId']),
@@ -816,6 +895,8 @@ class DayLogRow extends DataClass implements Insertable<DayLogRow> {
       'kcal': serializer.toJson<double>(kcal),
       'protein': serializer.toJson<double>(protein),
       'sugar': serializer.toJson<double>(sugar),
+      'carbs': serializer.toJson<double>(carbs),
+      'fat': serializer.toJson<double>(fat),
       'logDate': serializer.toJson<DateTime>(logDate),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'remoteId': serializer.toJson<String?>(remoteId),
@@ -832,6 +913,8 @@ class DayLogRow extends DataClass implements Insertable<DayLogRow> {
           double? kcal,
           double? protein,
           double? sugar,
+          double? carbs,
+          double? fat,
           DateTime? logDate,
           DateTime? createdAt,
           Value<String?> remoteId = const Value.absent(),
@@ -845,6 +928,8 @@ class DayLogRow extends DataClass implements Insertable<DayLogRow> {
         kcal: kcal ?? this.kcal,
         protein: protein ?? this.protein,
         sugar: sugar ?? this.sugar,
+        carbs: carbs ?? this.carbs,
+        fat: fat ?? this.fat,
         logDate: logDate ?? this.logDate,
         createdAt: createdAt ?? this.createdAt,
         remoteId: remoteId.present ? remoteId.value : this.remoteId,
@@ -863,6 +948,8 @@ class DayLogRow extends DataClass implements Insertable<DayLogRow> {
       kcal: data.kcal.present ? data.kcal.value : this.kcal,
       protein: data.protein.present ? data.protein.value : this.protein,
       sugar: data.sugar.present ? data.sugar.value : this.sugar,
+      carbs: data.carbs.present ? data.carbs.value : this.carbs,
+      fat: data.fat.present ? data.fat.value : this.fat,
       logDate: data.logDate.present ? data.logDate.value : this.logDate,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
@@ -881,6 +968,8 @@ class DayLogRow extends DataClass implements Insertable<DayLogRow> {
           ..write('kcal: $kcal, ')
           ..write('protein: $protein, ')
           ..write('sugar: $sugar, ')
+          ..write('carbs: $carbs, ')
+          ..write('fat: $fat, ')
           ..write('logDate: $logDate, ')
           ..write('createdAt: $createdAt, ')
           ..write('remoteId: $remoteId, ')
@@ -890,8 +979,21 @@ class DayLogRow extends DataClass implements Insertable<DayLogRow> {
   }
 
   @override
-  int get hashCode => Object.hash(id, barcode, productName, mealTypeIndex,
-      grams, kcal, protein, sugar, logDate, createdAt, remoteId, dirty);
+  int get hashCode => Object.hash(
+      id,
+      barcode,
+      productName,
+      mealTypeIndex,
+      grams,
+      kcal,
+      protein,
+      sugar,
+      carbs,
+      fat,
+      logDate,
+      createdAt,
+      remoteId,
+      dirty);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -904,6 +1006,8 @@ class DayLogRow extends DataClass implements Insertable<DayLogRow> {
           other.kcal == this.kcal &&
           other.protein == this.protein &&
           other.sugar == this.sugar &&
+          other.carbs == this.carbs &&
+          other.fat == this.fat &&
           other.logDate == this.logDate &&
           other.createdAt == this.createdAt &&
           other.remoteId == this.remoteId &&
@@ -919,6 +1023,8 @@ class DayLogsCompanion extends UpdateCompanion<DayLogRow> {
   final Value<double> kcal;
   final Value<double> protein;
   final Value<double> sugar;
+  final Value<double> carbs;
+  final Value<double> fat;
   final Value<DateTime> logDate;
   final Value<DateTime> createdAt;
   final Value<String?> remoteId;
@@ -932,6 +1038,8 @@ class DayLogsCompanion extends UpdateCompanion<DayLogRow> {
     this.kcal = const Value.absent(),
     this.protein = const Value.absent(),
     this.sugar = const Value.absent(),
+    this.carbs = const Value.absent(),
+    this.fat = const Value.absent(),
     this.logDate = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.remoteId = const Value.absent(),
@@ -946,6 +1054,8 @@ class DayLogsCompanion extends UpdateCompanion<DayLogRow> {
     required double kcal,
     required double protein,
     required double sugar,
+    this.carbs = const Value.absent(),
+    this.fat = const Value.absent(),
     required DateTime logDate,
     this.createdAt = const Value.absent(),
     this.remoteId = const Value.absent(),
@@ -966,6 +1076,8 @@ class DayLogsCompanion extends UpdateCompanion<DayLogRow> {
     Expression<double>? kcal,
     Expression<double>? protein,
     Expression<double>? sugar,
+    Expression<double>? carbs,
+    Expression<double>? fat,
     Expression<DateTime>? logDate,
     Expression<DateTime>? createdAt,
     Expression<String>? remoteId,
@@ -980,6 +1092,8 @@ class DayLogsCompanion extends UpdateCompanion<DayLogRow> {
       if (kcal != null) 'kcal': kcal,
       if (protein != null) 'protein': protein,
       if (sugar != null) 'sugar': sugar,
+      if (carbs != null) 'carbs': carbs,
+      if (fat != null) 'fat': fat,
       if (logDate != null) 'log_date': logDate,
       if (createdAt != null) 'created_at': createdAt,
       if (remoteId != null) 'remote_id': remoteId,
@@ -996,6 +1110,8 @@ class DayLogsCompanion extends UpdateCompanion<DayLogRow> {
       Value<double>? kcal,
       Value<double>? protein,
       Value<double>? sugar,
+      Value<double>? carbs,
+      Value<double>? fat,
       Value<DateTime>? logDate,
       Value<DateTime>? createdAt,
       Value<String?>? remoteId,
@@ -1009,6 +1125,8 @@ class DayLogsCompanion extends UpdateCompanion<DayLogRow> {
       kcal: kcal ?? this.kcal,
       protein: protein ?? this.protein,
       sugar: sugar ?? this.sugar,
+      carbs: carbs ?? this.carbs,
+      fat: fat ?? this.fat,
       logDate: logDate ?? this.logDate,
       createdAt: createdAt ?? this.createdAt,
       remoteId: remoteId ?? this.remoteId,
@@ -1043,6 +1161,12 @@ class DayLogsCompanion extends UpdateCompanion<DayLogRow> {
     if (sugar.present) {
       map['sugar'] = Variable<double>(sugar.value);
     }
+    if (carbs.present) {
+      map['carbs'] = Variable<double>(carbs.value);
+    }
+    if (fat.present) {
+      map['fat'] = Variable<double>(fat.value);
+    }
     if (logDate.present) {
       map['log_date'] = Variable<DateTime>(logDate.value);
     }
@@ -1069,6 +1193,8 @@ class DayLogsCompanion extends UpdateCompanion<DayLogRow> {
           ..write('kcal: $kcal, ')
           ..write('protein: $protein, ')
           ..write('sugar: $sugar, ')
+          ..write('carbs: $carbs, ')
+          ..write('fat: $fat, ')
           ..write('logDate: $logDate, ')
           ..write('createdAt: $createdAt, ')
           ..write('remoteId: $remoteId, ')
@@ -1966,6 +2092,263 @@ class SwapFeedbacksCompanion extends UpdateCompanion<SwapFeedbackRow> {
   }
 }
 
+class $RecipesTable extends Recipes with TableInfo<$RecipesTable, RecipeRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RecipesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _itemsJsonMeta =
+      const VerificationMeta('itemsJson');
+  @override
+  late final GeneratedColumn<String> itemsJson = GeneratedColumn<String>(
+      'items_json', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  List<GeneratedColumn> get $columns => [id, name, itemsJson, createdAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'recipes';
+  @override
+  VerificationContext validateIntegrity(Insertable<RecipeRow> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('items_json')) {
+      context.handle(_itemsJsonMeta,
+          itemsJson.isAcceptableOrUnknown(data['items_json']!, _itemsJsonMeta));
+    } else if (isInserting) {
+      context.missing(_itemsJsonMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  RecipeRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return RecipeRow(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      itemsJson: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}items_json'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+    );
+  }
+
+  @override
+  $RecipesTable createAlias(String alias) {
+    return $RecipesTable(attachedDatabase, alias);
+  }
+}
+
+class RecipeRow extends DataClass implements Insertable<RecipeRow> {
+  final int id;
+  final String name;
+
+  /// JSON-array van componenten (naam, barcode, gram + macro's per portie).
+  final String itemsJson;
+  final DateTime createdAt;
+  const RecipeRow(
+      {required this.id,
+      required this.name,
+      required this.itemsJson,
+      required this.createdAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    map['items_json'] = Variable<String>(itemsJson);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  RecipesCompanion toCompanion(bool nullToAbsent) {
+    return RecipesCompanion(
+      id: Value(id),
+      name: Value(name),
+      itemsJson: Value(itemsJson),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory RecipeRow.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return RecipeRow(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      itemsJson: serializer.fromJson<String>(json['itemsJson']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'itemsJson': serializer.toJson<String>(itemsJson),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  RecipeRow copyWith(
+          {int? id, String? name, String? itemsJson, DateTime? createdAt}) =>
+      RecipeRow(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        itemsJson: itemsJson ?? this.itemsJson,
+        createdAt: createdAt ?? this.createdAt,
+      );
+  RecipeRow copyWithCompanion(RecipesCompanion data) {
+    return RecipeRow(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      itemsJson: data.itemsJson.present ? data.itemsJson.value : this.itemsJson,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RecipeRow(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('itemsJson: $itemsJson, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, name, itemsJson, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RecipeRow &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.itemsJson == this.itemsJson &&
+          other.createdAt == this.createdAt);
+}
+
+class RecipesCompanion extends UpdateCompanion<RecipeRow> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<String> itemsJson;
+  final Value<DateTime> createdAt;
+  const RecipesCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.itemsJson = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  });
+  RecipesCompanion.insert({
+    this.id = const Value.absent(),
+    required String name,
+    required String itemsJson,
+    this.createdAt = const Value.absent(),
+  })  : name = Value(name),
+        itemsJson = Value(itemsJson);
+  static Insertable<RecipeRow> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<String>? itemsJson,
+    Expression<DateTime>? createdAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (itemsJson != null) 'items_json': itemsJson,
+      if (createdAt != null) 'created_at': createdAt,
+    });
+  }
+
+  RecipesCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? name,
+      Value<String>? itemsJson,
+      Value<DateTime>? createdAt}) {
+    return RecipesCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      itemsJson: itemsJson ?? this.itemsJson,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (itemsJson.present) {
+      map['items_json'] = Variable<String>(itemsJson.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RecipesCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('itemsJson: $itemsJson, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1975,12 +2358,19 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $FavoriteProductsTable favoriteProducts =
       $FavoriteProductsTable(this);
   late final $SwapFeedbacksTable swapFeedbacks = $SwapFeedbacksTable(this);
+  late final $RecipesTable recipes = $RecipesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [userGoals, dayLogs, cachedProducts, favoriteProducts, swapFeedbacks];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+        userGoals,
+        dayLogs,
+        cachedProducts,
+        favoriteProducts,
+        swapFeedbacks,
+        recipes
+      ];
 }
 
 typedef $$UserGoalsTableCreateCompanionBuilder = UserGoalsCompanion Function({
@@ -1989,6 +2379,7 @@ typedef $$UserGoalsTableCreateCompanionBuilder = UserGoalsCompanion Function({
   required int calorieTarget,
   required int proteinTarget,
   required int sugarLimit,
+  Value<int> carbsTarget,
   Value<String> preferencesJson,
   Value<String> allergiesJson,
   Value<DateTime> createdAt,
@@ -2000,6 +2391,7 @@ typedef $$UserGoalsTableUpdateCompanionBuilder = UserGoalsCompanion Function({
   Value<int> calorieTarget,
   Value<int> proteinTarget,
   Value<int> sugarLimit,
+  Value<int> carbsTarget,
   Value<String> preferencesJson,
   Value<String> allergiesJson,
   Value<DateTime> createdAt,
@@ -2029,6 +2421,9 @@ class $$UserGoalsTableFilterComposer
 
   ColumnFilters<int> get sugarLimit => $composableBuilder(
       column: $table.sugarLimit, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get carbsTarget => $composableBuilder(
+      column: $table.carbsTarget, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get preferencesJson => $composableBuilder(
       column: $table.preferencesJson,
@@ -2071,6 +2466,9 @@ class $$UserGoalsTableOrderingComposer
   ColumnOrderings<int> get sugarLimit => $composableBuilder(
       column: $table.sugarLimit, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<int> get carbsTarget => $composableBuilder(
+      column: $table.carbsTarget, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get preferencesJson => $composableBuilder(
       column: $table.preferencesJson,
       builder: (column) => ColumnOrderings(column));
@@ -2109,6 +2507,9 @@ class $$UserGoalsTableAnnotationComposer
 
   GeneratedColumn<int> get sugarLimit => $composableBuilder(
       column: $table.sugarLimit, builder: (column) => column);
+
+  GeneratedColumn<int> get carbsTarget => $composableBuilder(
+      column: $table.carbsTarget, builder: (column) => column);
 
   GeneratedColumn<String> get preferencesJson => $composableBuilder(
       column: $table.preferencesJson, builder: (column) => column);
@@ -2151,6 +2552,7 @@ class $$UserGoalsTableTableManager extends RootTableManager<
             Value<int> calorieTarget = const Value.absent(),
             Value<int> proteinTarget = const Value.absent(),
             Value<int> sugarLimit = const Value.absent(),
+            Value<int> carbsTarget = const Value.absent(),
             Value<String> preferencesJson = const Value.absent(),
             Value<String> allergiesJson = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
@@ -2162,6 +2564,7 @@ class $$UserGoalsTableTableManager extends RootTableManager<
             calorieTarget: calorieTarget,
             proteinTarget: proteinTarget,
             sugarLimit: sugarLimit,
+            carbsTarget: carbsTarget,
             preferencesJson: preferencesJson,
             allergiesJson: allergiesJson,
             createdAt: createdAt,
@@ -2173,6 +2576,7 @@ class $$UserGoalsTableTableManager extends RootTableManager<
             required int calorieTarget,
             required int proteinTarget,
             required int sugarLimit,
+            Value<int> carbsTarget = const Value.absent(),
             Value<String> preferencesJson = const Value.absent(),
             Value<String> allergiesJson = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
@@ -2184,6 +2588,7 @@ class $$UserGoalsTableTableManager extends RootTableManager<
             calorieTarget: calorieTarget,
             proteinTarget: proteinTarget,
             sugarLimit: sugarLimit,
+            carbsTarget: carbsTarget,
             preferencesJson: preferencesJson,
             allergiesJson: allergiesJson,
             createdAt: createdAt,
@@ -2217,6 +2622,8 @@ typedef $$DayLogsTableCreateCompanionBuilder = DayLogsCompanion Function({
   required double kcal,
   required double protein,
   required double sugar,
+  Value<double> carbs,
+  Value<double> fat,
   required DateTime logDate,
   Value<DateTime> createdAt,
   Value<String?> remoteId,
@@ -2231,6 +2638,8 @@ typedef $$DayLogsTableUpdateCompanionBuilder = DayLogsCompanion Function({
   Value<double> kcal,
   Value<double> protein,
   Value<double> sugar,
+  Value<double> carbs,
+  Value<double> fat,
   Value<DateTime> logDate,
   Value<DateTime> createdAt,
   Value<String?> remoteId,
@@ -2269,6 +2678,12 @@ class $$DayLogsTableFilterComposer
 
   ColumnFilters<double> get sugar => $composableBuilder(
       column: $table.sugar, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get carbs => $composableBuilder(
+      column: $table.carbs, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get fat => $composableBuilder(
+      column: $table.fat, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<DateTime> get logDate => $composableBuilder(
       column: $table.logDate, builder: (column) => ColumnFilters(column));
@@ -2317,6 +2732,12 @@ class $$DayLogsTableOrderingComposer
   ColumnOrderings<double> get sugar => $composableBuilder(
       column: $table.sugar, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<double> get carbs => $composableBuilder(
+      column: $table.carbs, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get fat => $composableBuilder(
+      column: $table.fat, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<DateTime> get logDate => $composableBuilder(
       column: $table.logDate, builder: (column) => ColumnOrderings(column));
 
@@ -2363,6 +2784,12 @@ class $$DayLogsTableAnnotationComposer
   GeneratedColumn<double> get sugar =>
       $composableBuilder(column: $table.sugar, builder: (column) => column);
 
+  GeneratedColumn<double> get carbs =>
+      $composableBuilder(column: $table.carbs, builder: (column) => column);
+
+  GeneratedColumn<double> get fat =>
+      $composableBuilder(column: $table.fat, builder: (column) => column);
+
   GeneratedColumn<DateTime> get logDate =>
       $composableBuilder(column: $table.logDate, builder: (column) => column);
 
@@ -2407,6 +2834,8 @@ class $$DayLogsTableTableManager extends RootTableManager<
             Value<double> kcal = const Value.absent(),
             Value<double> protein = const Value.absent(),
             Value<double> sugar = const Value.absent(),
+            Value<double> carbs = const Value.absent(),
+            Value<double> fat = const Value.absent(),
             Value<DateTime> logDate = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<String?> remoteId = const Value.absent(),
@@ -2421,6 +2850,8 @@ class $$DayLogsTableTableManager extends RootTableManager<
             kcal: kcal,
             protein: protein,
             sugar: sugar,
+            carbs: carbs,
+            fat: fat,
             logDate: logDate,
             createdAt: createdAt,
             remoteId: remoteId,
@@ -2435,6 +2866,8 @@ class $$DayLogsTableTableManager extends RootTableManager<
             required double kcal,
             required double protein,
             required double sugar,
+            Value<double> carbs = const Value.absent(),
+            Value<double> fat = const Value.absent(),
             required DateTime logDate,
             Value<DateTime> createdAt = const Value.absent(),
             Value<String?> remoteId = const Value.absent(),
@@ -2449,6 +2882,8 @@ class $$DayLogsTableTableManager extends RootTableManager<
             kcal: kcal,
             protein: protein,
             sugar: sugar,
+            carbs: carbs,
+            fat: fat,
             logDate: logDate,
             createdAt: createdAt,
             remoteId: remoteId,
@@ -2973,6 +3408,150 @@ typedef $$SwapFeedbacksTableProcessedTableManager = ProcessedTableManager<
     ),
     SwapFeedbackRow,
     PrefetchHooks Function()>;
+typedef $$RecipesTableCreateCompanionBuilder = RecipesCompanion Function({
+  Value<int> id,
+  required String name,
+  required String itemsJson,
+  Value<DateTime> createdAt,
+});
+typedef $$RecipesTableUpdateCompanionBuilder = RecipesCompanion Function({
+  Value<int> id,
+  Value<String> name,
+  Value<String> itemsJson,
+  Value<DateTime> createdAt,
+});
+
+class $$RecipesTableFilterComposer
+    extends Composer<_$AppDatabase, $RecipesTable> {
+  $$RecipesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get itemsJson => $composableBuilder(
+      column: $table.itemsJson, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$RecipesTableOrderingComposer
+    extends Composer<_$AppDatabase, $RecipesTable> {
+  $$RecipesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get itemsJson => $composableBuilder(
+      column: $table.itemsJson, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$RecipesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $RecipesTable> {
+  $$RecipesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get itemsJson =>
+      $composableBuilder(column: $table.itemsJson, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$RecipesTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $RecipesTable,
+    RecipeRow,
+    $$RecipesTableFilterComposer,
+    $$RecipesTableOrderingComposer,
+    $$RecipesTableAnnotationComposer,
+    $$RecipesTableCreateCompanionBuilder,
+    $$RecipesTableUpdateCompanionBuilder,
+    (RecipeRow, BaseReferences<_$AppDatabase, $RecipesTable, RecipeRow>),
+    RecipeRow,
+    PrefetchHooks Function()> {
+  $$RecipesTableTableManager(_$AppDatabase db, $RecipesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$RecipesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$RecipesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$RecipesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String> itemsJson = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+          }) =>
+              RecipesCompanion(
+            id: id,
+            name: name,
+            itemsJson: itemsJson,
+            createdAt: createdAt,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String name,
+            required String itemsJson,
+            Value<DateTime> createdAt = const Value.absent(),
+          }) =>
+              RecipesCompanion.insert(
+            id: id,
+            name: name,
+            itemsJson: itemsJson,
+            createdAt: createdAt,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$RecipesTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $RecipesTable,
+    RecipeRow,
+    $$RecipesTableFilterComposer,
+    $$RecipesTableOrderingComposer,
+    $$RecipesTableAnnotationComposer,
+    $$RecipesTableCreateCompanionBuilder,
+    $$RecipesTableUpdateCompanionBuilder,
+    (RecipeRow, BaseReferences<_$AppDatabase, $RecipesTable, RecipeRow>),
+    RecipeRow,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -2987,4 +3566,6 @@ class $AppDatabaseManager {
       $$FavoriteProductsTableTableManager(_db, _db.favoriteProducts);
   $$SwapFeedbacksTableTableManager get swapFeedbacks =>
       $$SwapFeedbacksTableTableManager(_db, _db.swapFeedbacks);
+  $$RecipesTableTableManager get recipes =>
+      $$RecipesTableTableManager(_db, _db.recipes);
 }

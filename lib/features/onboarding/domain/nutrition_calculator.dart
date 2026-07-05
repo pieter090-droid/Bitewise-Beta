@@ -55,6 +55,7 @@ class NutritionSuggestion {
     required this.calorieTarget,
     required this.proteinTarget,
     required this.sugarLimit,
+    required this.carbsTarget,
     required this.bmr,
     required this.tdee,
     this.note,
@@ -63,6 +64,7 @@ class NutritionSuggestion {
   final int calorieTarget;
   final int proteinTarget;
   final int sugarLimit;
+  final int carbsTarget;
   final int bmr;
   final int tdee;
 
@@ -133,10 +135,14 @@ NutritionSuggestion calculateNeeds(CalculatorInput i) {
 
   int round5(num v) => (v / 5).round() * 5;
 
+  // Koolhydraten: ~45% van de energie (4 kcal per gram).
+  final carbs = calories * 0.45 / 4;
+
   return NutritionSuggestion(
     calorieTarget: round5(calories),
     proteinTarget: round5(protein),
     sugarLimit: round5(sugar),
+    carbsTarget: round5(carbs),
     bmr: bmr.round(),
     tdee: tdee.round(),
     note: note,

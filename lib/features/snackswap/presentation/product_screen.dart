@@ -86,6 +86,8 @@ class _ProductBodyState extends ConsumerState<_ProductBody> {
           kcal: _scale(widget.product.kcal100),
           protein: _scale(widget.product.protein100),
           sugar: _scale(widget.product.sugar100),
+          carbs: _scale(widget.product.carbs100),
+          fat: _scale(widget.product.fat100),
         );
     ref.read(syncCoordinatorProvider).onLogsChanged();
     if (!mounted) return;
