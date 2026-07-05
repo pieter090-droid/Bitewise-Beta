@@ -8,6 +8,7 @@ import 'package:bitewise/features/favorites/data/favorites_repository.dart';
 import 'package:bitewise/features/snackswap/data/snackswap_service.dart';
 import 'package:bitewise/features/snackswap/domain/snack_product.dart';
 import 'package:bitewise/features/sync/application/sync_coordinator.dart';
+import 'package:bitewise/features/tracker/application/tracker_providers.dart';
 import 'package:bitewise/features/tracker/data/day_logs_repository.dart';
 import 'package:bitewise/features/tracker/domain/meal_type.dart';
 
@@ -59,7 +60,20 @@ class _ProductBody extends ConsumerStatefulWidget {
 
 class _ProductBodyState extends ConsumerState<_ProductBody> {
   double _grams = 100;
-  late MealType _meal = MealType.suggestForNow();
+  late MealType _meal;
+
+  @override
+  void initState() {
+    super.initState();
+    // Eetmoment voorgeselecteerd via de '+'-knop op het dashboard? Gebruik dat
+    // (en consumeer het eenmalig); anders een verstandige suggestie op tijd.
+    final pending = ref.read(pendingMealProvider);
+    _meal = pending ?? MealType.suggestForNow();
+    if (pending != null) {
+      Future.microtask(
+          () => ref.read(pendingMealProvider.notifier).state = null);
+    }
+  }
 
   double _scale(double? per100) => (per100 ?? 0) * _grams / 100;
 

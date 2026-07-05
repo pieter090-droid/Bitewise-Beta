@@ -143,6 +143,25 @@ class SnackSwapService {
     }
   }
 
+  /// Zoekt producten op naam in de Supabase `products`-tabel (voor suggesties).
+  /// Leest alleen (RLS staat select toe); geeft een lege lijst bij een fout.
+  Future<List<SnackProduct>> searchProducts(String query) async {
+    final q = query.trim();
+    if (!_supabase.isAvailable || q.length < 2) return const [];
+    try {
+      final rows = await _supabase.client
+          .from('products')
+          .select()
+          .ilike('name', '%$q%')
+          .limit(20);
+      return (rows as List)
+          .map((r) => SnackProduct.fromJson((r as Map).cast<String, dynamic>()))
+          .toList();
+    } catch (_) {
+      return const [];
+    }
+  }
+
   String _friendly(Object e) {
     final s = e.toString().toLowerCase();
     if (s.contains('socket') ||

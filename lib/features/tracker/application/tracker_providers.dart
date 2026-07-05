@@ -11,6 +11,10 @@ final selectedDayProvider = StateProvider<DateTime>((ref) {
   return DateTime(now.year, now.month, now.day);
 });
 
+/// Het eetmoment dat is voorgeselecteerd via de '+'-knop op het dashboard.
+/// Het productscherm gebruikt dit als standaard-eetmoment (eenmalig).
+final pendingMealProvider = StateProvider<MealType?>((ref) => null);
+
 /// Alle logs voor de geselecteerde dag.
 final dayLogsProvider = StreamProvider<List<DayLog>>((ref) {
   final day = ref.watch(selectedDayProvider);
