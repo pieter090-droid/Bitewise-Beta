@@ -9,8 +9,6 @@ name: iOS build (unsigned)
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main, master]
 
 jobs:
   build-ios:
@@ -30,6 +28,9 @@ jobs:
       # Genereer de iOS-projectmap (die zit niet in de repo).
       - name: Generate iOS platform files
         run: flutter create . --platforms=ios --org app.bitewise --project-name bitewise
+
+      - name: Set iOS platform in Podfile
+        run: sed -i.bak "s/^# platform :ios/platform :ios/" ios/Podfile
 
       # Camera-permissie voor mobile_scanner (setup_platform.ps1 is Windows-only).
       - name: Add camera usage description
