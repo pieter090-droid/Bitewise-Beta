@@ -40,7 +40,7 @@ app, repository of GitHub Pages-configuratie.
 
 1. Gebruik een publieke GitHub-repository met standaardbranch `main`.
 2. Kies bij **Settings > Pages** als bron **GitHub Actions**.
-3. Voeg bij **Settings > Secrets and variables > Actions** toe:
+3. Voeg bij **Settings > Secrets and variables > Actions > Variables** toe:
    - `SUPABASE_URL`
    - `SUPABASE_ANON_KEY`
 4. Start de workflow **Validate and deploy Bitewise Web Beta**, of push naar

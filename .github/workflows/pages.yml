@@ -6,7 +6,7 @@ name: Validate and deploy Bitewise Web Beta
 #
 # Eenmalig instellen:
 #   1. Repo -> Settings -> Pages -> Source = "GitHub Actions".
-#   2. Repo -> Settings -> Secrets and variables -> Actions -> New secret:
+#   2. Repo -> Settings -> Secrets and variables -> Actions -> Variables:
 #        SUPABASE_URL        = https://ulgfgawoulkyumfzqgrc.supabase.co
 #        SUPABASE_ANON_KEY   = sb_publishable_...   (je publishable key)
 #   Daarna draait deze workflow bij elke push naar main/master.
@@ -53,13 +53,13 @@ jobs:
         run: flutter test --reporter expanded
 
       # De publishable key mag in de client (dat is z'n doel). We injecteren
-      # 'm via --dart-define uit een GitHub Secret, zodat 'ie niet in de repo staat.
+      # De publishable clientconfig wordt via GitHub Actions Variables geinjecteerd.
       - name: Build web
         run: >
           flutter build web --release
           --base-href "/${{ github.event.repository.name }}/"
-          --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }}
-          --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+          --dart-define=SUPABASE_URL=${{ vars.SUPABASE_URL }}
+          --dart-define=SUPABASE_ANON_KEY=${{ vars.SUPABASE_ANON_KEY }}
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
