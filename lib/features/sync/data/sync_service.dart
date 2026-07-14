@@ -14,13 +14,15 @@ class SyncService implements SyncApi {
 
   static const _table = 'user_day_logs';
 
+  @override
   bool get available => _supabase.isAvailable;
 
-  String? get userId => available
-      ? _supabase.client.auth.currentUser?.id
-      : null;
+  @override
+  String? get userId =>
+      available ? _supabase.client.auth.currentUser?.id : null;
 
   /// Zorg voor een (anonieme) sessie. No-op zonder backend.
+  @override
   Future<void> ensureSignedIn() async {
     if (!available) return;
     final auth = _supabase.client.auth;
@@ -30,6 +32,7 @@ class SyncService implements SyncApi {
   }
 
   /// Idempotente upsert; geeft het server-id terug.
+  @override
   Future<String> upsertLog({
     required String clientId,
     required String? barcode,
@@ -65,12 +68,14 @@ class SyncService implements SyncApi {
     return row['id'] as String;
   }
 
+  @override
   Future<void> deleteRemote(String remoteId) async {
     if (!available) return;
     await _supabase.client.from(_table).delete().eq('id', remoteId);
   }
 
   /// Alle server-logs van de huidige gebruiker.
+  @override
   Future<List<Map<String, dynamic>>> fetchAll() async {
     final uid = userId;
     if (uid == null) return const [];
@@ -79,8 +84,7 @@ class SyncService implements SyncApi {
     return (rows as List).cast<Map<String, dynamic>>();
   }
 
-  String _dateOnly(DateTime d) =>
-      '${d.year.toString().padLeft(4, '0')}-'
+  String _dateOnly(DateTime d) => '${d.year.toString().padLeft(4, '0')}-'
       '${d.month.toString().padLeft(2, '0')}-'
       '${d.day.toString().padLeft(2, '0')}';
 }

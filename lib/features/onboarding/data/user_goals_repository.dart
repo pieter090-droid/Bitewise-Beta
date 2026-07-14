@@ -27,7 +27,9 @@ class UserGoalsRepository {
     final query = _db.select(_db.userGoals)
       ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)])
       ..limit(1);
-    return query.watchSingleOrNull().map((r) => r == null ? null : _toDomain(r));
+    return query
+        .watchSingleOrNull()
+        .map((r) => r == null ? null : _toDomain(r));
   }
 
   /// Vervangt het bestaande doel (we houden er één actief).

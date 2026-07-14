@@ -10,14 +10,35 @@ class AppShell extends StatelessWidget {
   final Widget child;
 
   static const _tabs = [
-    (route: Routes.home, icon: Icons.home_outlined, active: Icons.home, label: 'Home'),
-    (route: Routes.scan, icon: Icons.qr_code_scanner_outlined, active: Icons.qr_code_scanner, label: 'Scan'),
-    (route: Routes.favorites, icon: Icons.favorite_outline, active: Icons.favorite, label: 'Favorieten'),
-    (route: Routes.settings, icon: Icons.settings_outlined, active: Icons.settings, label: 'Instellingen'),
+    (
+      route: Routes.home,
+      icon: Icons.home_outlined,
+      active: Icons.home,
+      label: 'Home'
+    ),
+    (
+      route: Routes.scan,
+      icon: Icons.qr_code_scanner_outlined,
+      active: Icons.qr_code_scanner,
+      label: 'Scan'
+    ),
+    (
+      route: Routes.favorites,
+      icon: Icons.favorite_outline,
+      active: Icons.favorite,
+      label: 'Favorieten'
+    ),
+    (
+      route: Routes.settings,
+      icon: Icons.settings_outlined,
+      active: Icons.settings,
+      label: 'Instellingen'
+    ),
   ];
 
   int _indexFor(String location) {
-    final i = _tabs.indexWhere((t) => location.startsWith(t.route) && t.route != Routes.home);
+    final i = _tabs.indexWhere(
+        (t) => location.startsWith(t.route) && t.route != Routes.home);
     if (i >= 0) return i;
     return location == Routes.home ? 0 : 0;
   }

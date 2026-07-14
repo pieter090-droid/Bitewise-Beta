@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:bitewise/core/preferences/preferences_service.dart';
 import 'package:bitewise/core/theme/app_colors.dart';
 import 'package:bitewise/features/onboarding/data/user_goals_repository.dart';
 import 'package:bitewise/features/onboarding/domain/goal_type.dart';
 import 'package:bitewise/features/onboarding/domain/user_goal.dart';
 import 'package:bitewise/features/settings/application/settings_controller.dart';
 import 'package:bitewise/features/settings/presentation/edit_goal_sheet.dart';
-import 'package:bitewise/features/sync/application/sync_coordinator.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -16,9 +14,6 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final goalAsync = ref.watch(activeGoalProvider);
-    final prefs = ref.watch(preferencesServiceProvider);
-    final syncEnabled = ref.watch(syncEnabledProvider);
-    final settings = ref.read(settingsControllerProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Instellingen')),
@@ -33,7 +28,9 @@ class SettingsScreen extends ConsumerWidget {
                 child: Center(child: CircularProgressIndicator()),
               ),
             ),
-            error: (e, _) => Card(child: Padding(padding: const EdgeInsets.all(16), child: Text('$e'))),
+            error: (e, _) => Card(
+                child: Padding(
+                    padding: const EdgeInsets.all(16), child: Text('$e'))),
             data: (goal) => _GoalCard(
               goal: goal ?? UserGoal.defaultsFor(GoalType.maintain),
               onEdit: () => _editGoal(context, ref,
@@ -42,27 +39,24 @@ class SettingsScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 20),
           const _SectionTitle('Privacy'),
-          Card(
+          const Card(
             child: Column(
               children: [
-                SwitchListTile(
-                  title: const Text('Synchroniseren inschakelen'),
-                  subtitle: const Text(
-                      'Je logs blijven lokaal totdat je dit aanzet.'),
-                  value: syncEnabled,
-                  activeColor: AppColors.gold,
-                  onChanged: (v) => _toggleSync(context, ref, v),
+                ListTile(
+                  leading: Icon(Icons.shield_outlined, color: AppColors.navy),
+                  title: Text('Lokale testmodus'),
+                  subtitle: Text(
+                    'Dagboek, doelen en favorieten blijven in deze browser. '
+                    'Cloudsync en analytics staan uit in deze bèta.',
+                  ),
                 ),
-                const Divider(height: 1),
-                SwitchListTile(
-                  title: const Text('Anonieme statistieken'),
-                  subtitle: const Text('Help Bitewise verbeteren.'),
-                  value: prefs.analyticsEnabled,
-                  activeColor: AppColors.gold,
-                  onChanged: (v) async {
-                    await settings.setAnalyticsEnabled(v);
-                    ref.invalidate(preferencesServiceProvider);
-                  },
+                Divider(height: 1),
+                ListTile(
+                  leading: Icon(Icons.info_outline, color: AppColors.navy),
+                  title: Text('Geen medisch advies'),
+                  subtitle: Text(
+                    'Controleer voedingswaarden en allergenen altijd op het productetiket.',
+                  ),
                 ),
               ],
             ),
@@ -86,7 +80,8 @@ class SettingsScreen extends ConsumerWidget {
                       const Icon(Icons.restart_alt, color: AppColors.danger),
                   title: const Text('App resetten',
                       style: TextStyle(color: AppColors.danger)),
-                  subtitle: const Text('Wist alles en start onboarding opnieuw.'),
+                  subtitle:
+                      const Text('Wist alles en start onboarding opnieuw.'),
                   onTap: () => _confirmReset(context, ref),
                 ),
               ],
@@ -94,7 +89,7 @@ class SettingsScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 24),
           const Center(
-            child: Text('Bitewise · v0.1.0',
+            child: Text('Bitewise Web Beta · v0.2.0',
                 style: TextStyle(color: AppColors.slate)),
           ),
         ],
@@ -102,31 +97,8 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _toggleSync(
-      BuildContext context, WidgetRef ref, bool enable) async {
-    final messenger = ScaffoldMessenger.of(context);
-    await ref.read(settingsControllerProvider).setSyncEnabled(enable);
-    if (!enable) return;
-
-    messenger.showSnackBar(
-      const SnackBar(content: Text('Synchroniseren…')),
-    );
-    final outcome = await ref.read(syncCoordinatorProvider).syncNow();
-    messenger.hideCurrentSnackBar();
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(outcome.ok
-            ? 'Sync klaar · ${outcome.pushed} geüpload, ${outcome.pulled} opgehaald'
-            : 'Sync mislukt: ${outcome.error}'),
-      ),
-    );
-    if (!outcome.ok) {
-      // Rol de toggle terug wanneer sync niet mogelijk bleek.
-      await ref.read(settingsControllerProvider).setSyncEnabled(false);
-    }
-  }
-
-  Future<void> _editGoal(BuildContext context, WidgetRef ref, UserGoal goal) async {
+  Future<void> _editGoal(
+      BuildContext context, WidgetRef ref, UserGoal goal) async {
     final updated = await showModalBottomSheet<UserGoal>(
       context: context,
       isScrollControlled: true,
@@ -235,7 +207,9 @@ class _GoalCard extends StatelessWidget {
                 runSpacing: 6,
                 children: [
                   for (final p in goal.preferences)
-                    Chip(label: Text(p.label), visualDensity: VisualDensity.compact),
+                    Chip(
+                        label: Text(p.label),
+                        visualDensity: VisualDensity.compact),
                   for (final a in goal.allergies)
                     Chip(
                       label: Text('⚠ ${a.label}'),
@@ -267,7 +241,8 @@ class _Metric extends StatelessWidget {
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                   color: AppColors.navy)),
-          Text(label, style: const TextStyle(color: AppColors.slate, fontSize: 12)),
+          Text(label,
+              style: const TextStyle(color: AppColors.slate, fontSize: 12)),
         ],
       ),
     );

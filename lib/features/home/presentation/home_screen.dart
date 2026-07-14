@@ -35,6 +35,46 @@ class HomeScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
         children: [
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: AppColors.navy,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('BITEWISE WEB BETA',
+                    style: TextStyle(
+                        color: AppColors.gold,
+                        fontSize: 11,
+                        letterSpacing: .8,
+                        fontWeight: FontWeight.w900)),
+                const SizedBox(height: 6),
+                const Text('Een betere keuze, zonder verboden producten.',
+                    style: TextStyle(
+                        color: AppColors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800)),
+                const SizedBox(height: 6),
+                const Text(
+                  'Scan of zoek een product en vergelijk transparante alternatieven.',
+                  style: TextStyle(color: Color(0xFFD8E0E6), height: 1.35),
+                ),
+                const SizedBox(height: 14),
+                FilledButton.icon(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.gold,
+                    foregroundColor: AppColors.navy,
+                  ),
+                  onPressed: () => context.go(Routes.scan),
+                  icon: const Icon(Icons.qr_code_scanner),
+                  label: const Text('Scan of zoek product'),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
           _DateNavigator(day: day, ref: ref),
           const SizedBox(height: 12),
           _DayHeaderCard(
@@ -97,8 +137,7 @@ class HomeScreen extends ConsumerWidget {
             ),
           ],
           const SizedBox(height: 24),
-          Text('Eetmomenten',
-              style: Theme.of(context).textTheme.titleMedium),
+          Text('Eetmomenten', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           for (final meal in MealType.values)
             MealSection(meal: meal, logs: logsByMeal[meal] ?? const []),
@@ -116,8 +155,18 @@ class _DateNavigator extends StatelessWidget {
 
   static const _days = ['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo'];
   static const _months = [
-    'jan', 'feb', 'mrt', 'apr', 'mei', 'jun',
-    'jul', 'aug', 'sep', 'okt', 'nov', 'dec'
+    'jan',
+    'feb',
+    'mrt',
+    'apr',
+    'mei',
+    'jun',
+    'jul',
+    'aug',
+    'sep',
+    'okt',
+    'nov',
+    'dec'
   ];
 
   String _label() {
@@ -206,7 +255,8 @@ class _DayHeaderCard extends StatelessWidget {
                         : '${remaining.abs()} kcal boven doel',
                     style: TextStyle(
                       fontSize: 15,
-                      color: remaining >= 0 ? AppColors.slate : AppColors.danger,
+                      color:
+                          remaining >= 0 ? AppColors.slate : AppColors.danger,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

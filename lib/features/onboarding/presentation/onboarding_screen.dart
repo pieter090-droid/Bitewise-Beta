@@ -93,7 +93,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     flex: 2,
                     child: ElevatedButton(
                       onPressed: _next,
-                      child: Text(_page == _lastPage ? 'Aan de slag' : 'Volgende'),
+                      child:
+                          Text(_page == _lastPage ? 'Aan de slag' : 'Volgende'),
                     ),
                   ),
                 ],
@@ -146,7 +147,8 @@ class _GoalStep extends ConsumerWidget {
         Text('Wat is je doel?',
             style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 4),
-        const Text('We stemmen je dag en swaps hierop af.',
+        const Text(
+            'We stemmen je vergelijkingen hierop af. Alles blijft standaard lokaal.',
             style: TextStyle(color: AppColors.slate)),
         const SizedBox(height: 20),
         for (final type in GoalType.values)
@@ -176,8 +178,7 @@ class _TargetsStep extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        Text('Je dagdoelen',
-            style: Theme.of(context).textTheme.headlineSmall),
+        Text('Je dagdoelen', style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 4),
         const Text('Pas gerust aan, of laat ze berekenen.',
             style: TextStyle(color: AppColors.slate)),
@@ -253,8 +254,7 @@ class _PreferencesStep extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        Text('Voorkeuren',
-            style: Theme.of(context).textTheme.headlineSmall),
+        Text('Voorkeuren', style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 12),
         Wrap(
           spacing: 8,
@@ -271,7 +271,8 @@ class _PreferencesStep extends ConsumerWidget {
         const SizedBox(height: 28),
         Text('Allergieën', style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 4),
-        const Text('Producten met deze ingrediënten sluiten we uit bij swaps.',
+        const Text(
+            'We gebruiken dit als filter, maar controleer altijd zelf het etiket.',
             style: TextStyle(color: AppColors.slate)),
         const SizedBox(height: 12),
         Wrap(

@@ -42,10 +42,9 @@ class _CalculatorSheetState extends ConsumerState<CalculatorSheet> {
         _sex = Sex.values[((m['sex'] as int?) ?? 1).clamp(0, 1)];
         _age = ((m['age'] as int?) ?? 30).clamp(14, 90);
         _heightCm = ((m['height'] as int?) ?? 170).clamp(130, 215);
-        _weightKg =
-            ((m['weight'] as num?) ?? 70).toDouble().clamp(40.0, 200.0);
-        _activity = ActivityLevel
-            .values[((m['activity'] as int?) ?? 2).clamp(0, 4)];
+        _weightKg = ((m['weight'] as num?) ?? 70).toDouble().clamp(40.0, 200.0);
+        _activity =
+            ActivityLevel.values[((m['activity'] as int?) ?? 2).clamp(0, 4)];
       } catch (_) {/* val terug op defaults */}
     }
   }
@@ -74,7 +73,8 @@ class _CalculatorSheetState extends ConsumerState<CalculatorSheet> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: DraggableScrollableSheet(
         expand: false,
         initialChildSize: 0.92,
@@ -140,8 +140,15 @@ class _CalculatorSheetState extends ConsumerState<CalculatorSheet> {
                   if (_isLoss) ...[
                     const SizedBox(height: 16),
                     const _Label('Afvaldoel'),
-                    _slider('Hoeveel afvallen', _targetLossKg, 1, 30, 29, 'kg',
-                        (v) => setState(() => _targetLossKg = v.roundToDouble())),
+                    _slider(
+                        'Hoeveel afvallen',
+                        _targetLossKg,
+                        1,
+                        30,
+                        29,
+                        'kg',
+                        (v) =>
+                            setState(() => _targetLossKg = v.roundToDouble())),
                     _slider('In hoeveel weken', _weeks.toDouble(), 4, 52, 48,
                         'weken', (v) => setState(() => _weeks = v.round())),
                   ],

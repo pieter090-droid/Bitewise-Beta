@@ -5,7 +5,8 @@ import 'package:bitewise/features/onboarding/domain/nutrition_calculator.dart';
 
 void main() {
   // Referentiepersoon: vrouw, 30 jaar, 170 cm, 70 kg, gemiddeld actief.
-  CalculatorInput input(GoalType goal, {double? kg, int? weeks}) => CalculatorInput(
+  CalculatorInput input(GoalType goal, {double? kg, int? weeks}) =>
+      CalculatorInput(
         sex: Sex.female,
         age: 30,
         heightCm: 170,

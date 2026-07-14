@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import 'package:bitewise/core/router/app_router.dart';
 import 'package:bitewise/core/theme/app_colors.dart';
 import 'package:bitewise/features/snackswap/application/snackswap_providers.dart';
 import 'package:bitewise/features/snackswap/data/snackswap_service.dart';
@@ -42,7 +44,7 @@ class _SwapScreenState extends ConsumerState<SwapScreen> {
     final outcome = await ref.read(snackSwapServiceProvider).recommendSwaps(
           barcode: widget.barcode,
           goal: _goal,
-          limit: 3,
+          limit: 8,
         );
     if (!mounted) return;
     switch (outcome) {
@@ -73,7 +75,7 @@ class _SwapScreenState extends ConsumerState<SwapScreen> {
     await ref.read(dayLogsRepositoryProvider).logEntry(
           productName: item.name,
           mealType: meal,
-          grams: 0, // swap = 1 portie, geen gramgewicht
+          grams: item.grams ?? 100,
           kcal: item.kcal ?? 0,
           protein: item.proteinG ?? 0,
           sugar: item.sugarG ?? 0,
@@ -100,16 +102,32 @@ class _SwapScreenState extends ConsumerState<SwapScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  for (final g in SnackGoal.values)
-                    ChoiceChip(
-                      label: Text(g.label),
-                      selected: _goal == g,
-                      onSelected: (_) => _selectGoal(g),
-                    ),
+                  const Text('Wat wil je verbeteren?',
+                      style: TextStyle(
+                          color: AppColors.navy,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800)),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Bitewise vergelijkt alleen directe of verwante alternatieven.',
+                    style: TextStyle(color: AppColors.slate, fontSize: 13),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (final g in SnackGoal.values)
+                        ChoiceChip(
+                          label: Text(g.label),
+                          selected: _goal == g,
+                          onSelected: (_) => _selectGoal(g),
+                        ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -136,6 +154,11 @@ class _SwapScreenState extends ConsumerState<SwapScreen> {
           icon: Icons.cloud_off,
           title: 'Er ging iets mis',
           body: _errorMessage,
+          action: FilledButton.icon(
+            onPressed: _load,
+            icon: const Icon(Icons.refresh),
+            label: const Text('Opnieuw proberen'),
+          ),
         );
       case _View.found:
         return ListView(
@@ -146,6 +169,9 @@ class _SwapScreenState extends ConsumerState<SwapScreen> {
                 rank: i + 1,
                 item: _items[i],
                 onLog: () => _logSwap(_items[i]),
+                onOpen: _items[i].barcode.isEmpty
+                    ? null
+                    : () => context.push(Routes.product(_items[i].barcode)),
               ),
           ],
         );
@@ -158,11 +184,13 @@ class _SwapCard extends StatelessWidget {
     required this.rank,
     required this.item,
     required this.onLog,
+    required this.onOpen,
   });
 
   final int rank;
   final SwapSuggestion item;
   final VoidCallback onLog;
+  final VoidCallback? onOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +198,9 @@ class _SwapCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: rank == 1
+            ? AppColors.gold.withValues(alpha: 0.08)
+            : AppColors.white,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: AppColors.mist),
       ),
@@ -192,15 +222,29 @@ class _SwapCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (rank == 1)
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 4),
+                        child: Text('BESTE KEUZE VOOR JOU',
+                            style: TextStyle(
+                                color: AppColors.gold,
+                                fontSize: 11,
+                                letterSpacing: .7,
+                                fontWeight: FontWeight.w900)),
+                      ),
                     Text(item.name,
                         style: const TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 16,
                             color: AppColors.navy)),
-                    if (item.tag != null && item.tag!.isNotEmpty)
-                      Text(item.tag!,
+                    if (item.brand != null && item.brand!.isNotEmpty)
+                      Text(item.brand!,
                           style: const TextStyle(
                               color: AppColors.slate, fontSize: 13)),
+                    if (item.tag != null && item.tag!.isNotEmpty)
+                      Text('${item.tag!} · ${item.basisLabel}',
+                          style: const TextStyle(
+                              color: AppColors.slate, fontSize: 12)),
                   ],
                 ),
               ),
@@ -225,14 +269,39 @@ class _SwapCard extends StatelessWidget {
               ],
             ),
           ],
-          const SizedBox(height: 12),
-          Align(
-            alignment: Alignment.centerRight,
-            child: OutlinedButton.icon(
-              onPressed: onLog,
-              icon: const Icon(Icons.add, size: 18),
-              label: const Text('Toevoegen aan log'),
+          if (item.warnings.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppColors.cream,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                'Let op: ${item.warnings.first}',
+                style: const TextStyle(color: AppColors.slate, fontSize: 12),
+              ),
             ),
+          ],
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              if (onOpen != null)
+                Expanded(
+                  child: TextButton(
+                    onPressed: onOpen,
+                    child: const Text('Bekijk product'),
+                  ),
+                ),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: item.kcal == null ? null : onLog,
+                  icon: const Icon(Icons.add, size: 18),
+                  label: const Text('Log keuze'),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -284,10 +353,15 @@ class _ScoreBadge extends StatelessWidget {
 }
 
 class _Info extends StatelessWidget {
-  const _Info({required this.icon, required this.title, required this.body});
+  const _Info(
+      {required this.icon,
+      required this.title,
+      required this.body,
+      this.action});
   final IconData icon;
   final String title;
   final String body;
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
@@ -308,6 +382,10 @@ class _Info extends StatelessWidget {
             Text(body,
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: AppColors.slate)),
+            if (action != null) ...[
+              const SizedBox(height: 16),
+              action!,
+            ],
           ],
         ),
       ),

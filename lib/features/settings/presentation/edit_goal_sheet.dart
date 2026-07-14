@@ -83,20 +83,40 @@ class _EditGoalSheetState extends State<EditGoalSheet> {
                     label: const Text('Bereken mijn behoefte'),
                   ),
                   const SizedBox(height: 12),
-                  _slider('Calorieën', _goal.calorieTarget.toDouble(), 1200,
-                      3500, 46, 'kcal',
+                  _slider(
+                      'Calorieën',
+                      _goal.calorieTarget.toDouble(),
+                      1200,
+                      3500,
+                      46,
+                      'kcal',
                       (v) => setState(() =>
                           _goal = _goal.copyWith(calorieTarget: v.round()))),
-                  _slider('Eiwit', _goal.proteinTarget.toDouble(), 40, 220, 36,
+                  _slider(
+                      'Eiwit',
+                      _goal.proteinTarget.toDouble(),
+                      40,
+                      220,
+                      36,
                       'g',
                       (v) => setState(() =>
                           _goal = _goal.copyWith(proteinTarget: v.round()))),
-                  _slider('Suikerlimiet', _goal.sugarLimit.toDouble(), 10, 90,
-                      16, 'g',
-                      (v) => setState(() =>
-                          _goal = _goal.copyWith(sugarLimit: v.round()))),
-                  _slider('Koolhydraten', _goal.carbsTarget.toDouble(), 50, 500,
-                      90, 'g',
+                  _slider(
+                      'Suikerlimiet',
+                      _goal.sugarLimit.toDouble(),
+                      10,
+                      90,
+                      16,
+                      'g',
+                      (v) => setState(
+                          () => _goal = _goal.copyWith(sugarLimit: v.round()))),
+                  _slider(
+                      'Koolhydraten',
+                      _goal.carbsTarget.toDouble(),
+                      50,
+                      500,
+                      90,
+                      'g',
                       (v) => setState(() =>
                           _goal = _goal.copyWith(carbsTarget: v.round()))),
                   const SizedBox(height: 12),

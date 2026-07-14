@@ -80,9 +80,9 @@ class DayLogsRepository {
 
   /// Alle nog niet (of opnieuw te) synchroniseren logs.
   Future<List<DayLog>> getDirtyLogs() async {
-    final rows =
-        await (_db.select(_db.dayLogs)..where((t) => t.dirty.equals(true)))
-            .get();
+    final rows = await (_db.select(_db.dayLogs)
+          ..where((t) => t.dirty.equals(true)))
+        .get();
     return rows.map(_toDomain).toList();
   }
 

@@ -20,8 +20,10 @@ class OnboardingController extends Notifier<UserGoal> {
     );
   }
 
-  void setCalorieTarget(int value) => state = state.copyWith(calorieTarget: value);
-  void setProteinTarget(int value) => state = state.copyWith(proteinTarget: value);
+  void setCalorieTarget(int value) =>
+      state = state.copyWith(calorieTarget: value);
+  void setProteinTarget(int value) =>
+      state = state.copyWith(proteinTarget: value);
   void setSugarLimit(int value) => state = state.copyWith(sugarLimit: value);
   void setCarbsTarget(int value) => state = state.copyWith(carbsTarget: value);
 

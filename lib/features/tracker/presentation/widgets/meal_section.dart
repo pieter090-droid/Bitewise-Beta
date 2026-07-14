@@ -77,7 +77,8 @@ class _LogTile extends ConsumerWidget {
   final DayLog log;
 
   Future<void> _delete(WidgetRef ref) async {
-    final remoteId = await ref.read(dayLogsRepositoryProvider).deleteLog(log.id);
+    final remoteId =
+        await ref.read(dayLogsRepositoryProvider).deleteLog(log.id);
     await ref.read(syncCoordinatorProvider).handleDelete(remoteId);
   }
 

@@ -78,7 +78,8 @@ class _RecipeBuilderScreenState extends ConsumerState<RecipeBuilderScreen> {
                       fontWeight: FontWeight.w700, fontSize: 16)),
               const SizedBox(height: 12),
               Text('Portie: ${grams.round()} g',
-                  style: const TextStyle(color: AppColors.gold, fontWeight: FontWeight.w700)),
+                  style: const TextStyle(
+                      color: AppColors.gold, fontWeight: FontWeight.w700)),
               Slider(
                 value: grams,
                 min: 10,
@@ -101,13 +102,13 @@ class _RecipeBuilderScreenState extends ConsumerState<RecipeBuilderScreen> {
   Future<void> _save() async {
     final name = _nameController.text.trim();
     if (name.isEmpty) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Geef je gerecht een naam.')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Geef je gerecht een naam.')));
       return;
     }
     if (_items.isEmpty) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Voeg minstens één product toe.')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Voeg minstens één product toe.')));
       return;
     }
     await ref.read(recipesRepositoryProvider).save(name: name, items: _items);
@@ -119,8 +120,7 @@ class _RecipeBuilderScreenState extends ConsumerState<RecipeBuilderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final totalKcal =
-        _items.fold<double>(0, (s, i) => s + i.kcal).round();
+    final totalKcal = _items.fold<double>(0, (s, i) => s + i.kcal).round();
 
     return Scaffold(
       backgroundColor: AppColors.cream,

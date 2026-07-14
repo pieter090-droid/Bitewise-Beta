@@ -73,8 +73,9 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
         await ref.read(snackSwapServiceProvider).lookupProduct(barcode);
     if (!mounted) return;
     if (outcome is LookupFound) {
-      await ref.read(favoritesRepositoryProvider).add(
-          barcode: outcome.product.barcode, name: outcome.product.name);
+      await ref
+          .read(favoritesRepositoryProvider)
+          .add(barcode: outcome.product.barcode, name: outcome.product.name);
       messenger.showSnackBar(SnackBar(
           content: Text('${outcome.product.name} toegevoegd aan favorieten')));
     } else {
@@ -99,13 +100,13 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
             onAction: () => context.push(Routes.recipeBuilder),
           ),
           if (recipes.isEmpty)
-            const _Empty('Nog geen gerechten. Maak er één om snel toe te voegen.'),
+            const _Empty(
+                'Nog geen gerechten. Maak er één om snel toe te voegen.'),
           for (final r in recipes)
             _RecipeTile(
               recipe: r,
               onAdd: () => _addRecipeToDay(r),
-              onDelete: () =>
-                  ref.read(recipesRepositoryProvider).delete(r.id),
+              onDelete: () => ref.read(recipesRepositoryProvider).delete(r.id),
             ),
           const SizedBox(height: 24),
           _SectionHeader(
@@ -114,14 +115,16 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
             onAction: _addFavorite,
           ),
           if (favorites.isEmpty)
-            const _Empty('Nog geen favorieten. Tik op "Toevoegen" of het hartje bij een product.'),
+            const _Empty(
+                'Nog geen favorieten. Tik op "Toevoegen" of het hartje bij een product.'),
           for (final f in favorites)
             Card(
               margin: const EdgeInsets.only(bottom: 8),
               child: ListTile(
                 leading: const CircleAvatar(
                   backgroundColor: AppColors.mist,
-                  child: Icon(Icons.favorite, color: AppColors.danger, size: 20),
+                  child:
+                      Icon(Icons.favorite, color: AppColors.danger, size: 20),
                 ),
                 title: Text(f.name),
                 subtitle: Text('Barcode ${f.barcode}',

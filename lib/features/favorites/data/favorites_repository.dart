@@ -5,7 +5,8 @@ import 'package:bitewise/core/database/app_database.dart';
 
 /// Eenvoudig favorietmodel (lokaal).
 class Favorite {
-  const Favorite({required this.barcode, required this.name, required this.createdAt});
+  const Favorite(
+      {required this.barcode, required this.name, required this.createdAt});
   final String barcode;
   final String name;
   final DateTime createdAt;

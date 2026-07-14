@@ -58,7 +58,8 @@ class WeekChart extends StatelessWidget {
                   for (final d in days)
                     Expanded(
                       child: _Bar(
-                        heightFraction: (d.kcal / maxVal).clamp(0, 1).toDouble(),
+                        heightFraction:
+                            (d.kcal / maxVal).clamp(0, 1).toDouble(),
                         plotHeight: _plotHeight,
                         isToday: _sameDay(d.day, today),
                         overTarget: d.kcal > target && target > 0,

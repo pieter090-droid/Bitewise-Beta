@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -94,7 +93,8 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
               Container(
                 width: double.infinity,
                 color: AppColors.gold.withValues(alpha: 0.18),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 child: Text('Toevoegen aan ${pendingMeal.label}',
                     style: const TextStyle(
                         color: AppColors.navy, fontWeight: FontWeight.w700)),
@@ -117,15 +117,14 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
               ),
             ),
             Expanded(child: _body(isBarcode)),
-            if (!kIsWeb)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                child: OutlinedButton.icon(
-                  onPressed: _openCamera,
-                  icon: const Icon(Icons.qr_code_scanner),
-                  label: const Text('Scan met camera'),
-                ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+              child: OutlinedButton.icon(
+                onPressed: _openCamera,
+                icon: const Icon(Icons.qr_code_scanner),
+                label: const Text('Scan met camera'),
               ),
+            ),
           ],
         ),
       ),

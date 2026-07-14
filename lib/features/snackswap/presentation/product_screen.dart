@@ -59,12 +59,16 @@ class _ProductBody extends ConsumerStatefulWidget {
 }
 
 class _ProductBodyState extends ConsumerState<_ProductBody> {
-  double _grams = 100;
+  late double _grams;
   late MealType _meal;
 
   @override
   void initState() {
     super.initState();
+    final suggested = widget.product.servingQuantity;
+    _grams = suggested != null && suggested >= 5 && suggested <= 500
+        ? suggested
+        : 100;
     // Eetmoment voorgeselecteerd via de '+'-knop op het dashboard? Gebruik dat
     // (en consumeer het eenmalig); anders een verstandige suggestie op tijd.
     final pending = ref.read(pendingMealProvider);
@@ -92,7 +96,8 @@ class _ProductBodyState extends ConsumerState<_ProductBody> {
     ref.read(syncCoordinatorProvider).onLogsChanged();
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${widget.product.name} gelogd bij ${_meal.label}')),
+      SnackBar(
+          content: Text('${widget.product.name} gelogd bij ${_meal.label}')),
     );
     context.go(Routes.home);
   }
@@ -108,6 +113,22 @@ class _ProductBodyState extends ConsumerState<_ProductBody> {
           child: ListView(
             padding: const EdgeInsets.all(20),
             children: [
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.gold.withValues(alpha: 0.10),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Text(
+                  'Bèta · Controleer product- en allergeneninformatie altijd op het etiket.',
+                  style: TextStyle(
+                      color: AppColors.navy,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600),
+                ),
+              ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -150,6 +171,13 @@ class _ProductBodyState extends ConsumerState<_ProductBody> {
                 protein: _scale(p.protein100),
                 fat: _scale(p.fat100),
                 carbs: _scale(p.carbs100),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                p.dataQualityScore == null
+                    ? 'Datakwaliteit: niet beoordeeld'
+                    : 'Datakwaliteit: ${p.dataQualityScore!.round()}/100',
+                style: const TextStyle(color: AppColors.slate, fontSize: 12),
               ),
             ],
           ),
@@ -230,8 +258,8 @@ class _PortionCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           const Text('Eetmoment',
-              style:
-                  TextStyle(fontWeight: FontWeight.w700, color: AppColors.navy)),
+              style: TextStyle(
+                  fontWeight: FontWeight.w700, color: AppColors.navy)),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,

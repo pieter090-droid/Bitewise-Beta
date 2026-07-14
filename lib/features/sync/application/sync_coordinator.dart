@@ -27,10 +27,12 @@ class SyncCoordinator {
   final Ref _ref;
 
   bool get _enabled =>
-      _ref.read(syncEnabledProvider) && _ref.read(syncServiceProvider).available;
+      _ref.read(syncEnabledProvider) &&
+      _ref.read(syncServiceProvider).available;
 
   String _clientId(int localId) {
-    final installId = _ref.read(preferencesServiceProvider).getOrCreateInstallId();
+    final installId =
+        _ref.read(preferencesServiceProvider).getOrCreateInstallId();
     return '$installId:$localId';
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:bitewise/core/constants/app_constants.dart';
 import 'package:bitewise/core/supabase/supabase_service.dart';
+import 'package:bitewise/features/snackswap/application/swap_ranker.dart';
 import 'package:bitewise/features/snackswap/domain/goal.dart';
 import 'package:bitewise/features/snackswap/domain/snack_product.dart';
 import 'package:bitewise/features/snackswap/domain/swap_suggestion.dart';
@@ -64,6 +65,10 @@ class SnackSwapService {
 
   Future<LookupOutcome> lookupProduct(String barcode) async {
     final trimmed = barcode.trim();
+    if (!isValidBarcode(trimmed)) {
+      return const LookupError(
+          'Voer een geldige barcode van 8 tot 14 cijfers in.');
+    }
     if (!_supabase.isAvailable) {
       return const LookupError(
         'Geen backend geconfigureerd. Vul je Supabase-key in assets/env/env.json.',
@@ -71,6 +76,13 @@ class SnackSwapService {
     }
 
     try {
+      // De actuele read-only view is de betrouwbaarste bron en bevat ook de
+      // classificatie- en portievelden. Dit pad wijzigt Supabase nooit.
+      final resolved = await _featureByBarcode(trimmed);
+      if (resolved != null) return LookupFound(resolved);
+
+      // Alleen voor nog onbekende barcodes gebruiken we het reeds bestaande
+      // lookup-pad van Bitewise. De beta deployt of wijzigt deze functie niet.
       final response = await _supabase.client.functions.invoke(
         AppConstants.fnLookupProduct,
         body: {'barcode': trimmed},
@@ -82,16 +94,15 @@ class SnackSwapService {
       }
       final map = data.cast<String, dynamic>();
 
-      final found = map['found'] == true;
       final product = map['product'];
-      if (!found || product == null) {
+      if (product == null) {
         return const LookupNotFound();
       }
 
       return LookupFound(
         SnackProduct.fromJson(
           (product as Map).cast<String, dynamic>(),
-          source: map['source'] as String?,
+          source: map['source'] as String? ?? 'lookup_product',
         ),
       );
     } catch (e) {
@@ -111,33 +122,22 @@ class SnackSwapService {
     }
 
     try {
-      final response = await _supabase.client.functions.invoke(
-        AppConstants.fnRecommendSwaps,
-        body: {
-          'barcode': barcode.trim(),
-          'user_goal': goal.apiValue,
-          'limit': limit,
-        },
+      final sourceRow = await _featureRowByBarcode(barcode.trim());
+      if (sourceRow == null) return const SwapNotFound();
+      final source = SnackProduct.fromJson(sourceRow);
+
+      final rows = await _candidateRows(sourceRow);
+      final candidates =
+          rows.map(SnackProduct.fromJson).toList(growable: false);
+      final suggestions = SwapRanker.rank(
+        source: source,
+        candidates: candidates,
+        goal: goal,
+        limit: limit,
       );
-
-      final data = response.data;
-      if (data is! Map) {
-        return const SwapError('Onverwacht antwoord van de server.');
-      }
-      final map = data.cast<String, dynamic>();
-
-      final list = (map['recommendations'] as List?) ?? const [];
-      if (map['found'] != true || list.isEmpty) {
-        return const SwapNotFound();
-      }
-
-      final suggestions = list
-          .map((e) =>
-              SwapSuggestion.fromJson((e as Map).cast<String, dynamic>()))
-          .toList()
-        ..sort((a, b) => b.score.compareTo(a.score));
-
-      return SwapFound(suggestions);
+      return suggestions.isEmpty
+          ? const SwapNotFound()
+          : SwapFound(suggestions);
     } catch (e) {
       return SwapError(_friendly(e));
     }
@@ -150,7 +150,7 @@ class SnackSwapService {
     if (!_supabase.isAvailable || q.length < 2) return const [];
     try {
       final rows = await _supabase.client
-          .from('products')
+          .from('product_features_resolved')
           .select()
           .ilike('name', '%$q%')
           .limit(20);
@@ -160,6 +160,54 @@ class SnackSwapService {
     } catch (_) {
       return const [];
     }
+  }
+
+  Future<SnackProduct?> _featureByBarcode(String barcode) async {
+    final row = await _featureRowByBarcode(barcode);
+    return row == null ? null : SnackProduct.fromJson(row, source: 'bitewise');
+  }
+
+  Future<Map<String, dynamic>?> _featureRowByBarcode(String barcode) async {
+    final row = await _supabase.client
+        .from('product_features_resolved')
+        .select()
+        .eq('barcode', barcode)
+        .maybeSingle();
+    return row == null ? null : Map<String, dynamic>.from(row);
+  }
+
+  Future<List<Map<String, dynamic>>> _candidateRows(
+    Map<String, dynamic> source,
+  ) async {
+    final family = source['swap_family'] as String?;
+    final snackType = source['snack_type'] as String?;
+    dynamic query = _supabase.client
+        .from('product_features_resolved')
+        .select()
+        .eq('is_swap_relevant', true)
+        .neq('barcode', source['barcode']);
+
+    if (family != null && family.isNotEmpty) {
+      final mapping = await _supabase.client
+          .from('swap_family_mapping')
+          .select('related_families')
+          .eq('swap_family', family)
+          .maybeSingle();
+      final related = mapping?['related_families'] is List
+          ? (mapping!['related_families'] as List).whereType<String>()
+          : const Iterable<String>.empty();
+      final families = <String>{family, ...related}.toList(growable: false);
+      query = query.inFilter('swap_family', families);
+    } else if (snackType != null && snackType.isNotEmpty) {
+      query = query.eq('snack_type', snackType);
+    } else {
+      return const [];
+    }
+
+    final rows = await query.limit(250);
+    return (rows as List)
+        .map((row) => Map<String, dynamic>.from(row as Map))
+        .toList(growable: false);
   }
 
   String _friendly(Object e) {
